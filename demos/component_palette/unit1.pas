@@ -13,23 +13,25 @@ type
     btnFont: TButton;
     cbFlat: TCheckBox;
     cbRTL: TCheckBox;
+    cbAutoScroll: TCheckBox;
     FontDialog1: TFontDialog;
     ImageList1:TImageList;
     ArrowImages: TImageList;
-    Label1: TLabel;
+    lblButtonSize: TLabel;
     Panel1: TPanel;
-    rgScrollMouseWheel: TRadioGroup;
+    rgMouseWheelMode: TRadioGroup;
     rgAlign: TRadioGroup;
     rgScrollBtnSymbols: TRadioGroup;
-    SpinEdit1: TSpinEdit;
+    seButtonSize: TSpinEdit;
     procedure btnFontClick(Sender: TObject);
+    procedure cbAutoScrollChange(Sender: TObject);
     procedure cbFlatChange(Sender: TObject);
     procedure cbRTLChange(Sender: TObject);
     procedure FormCreate(Sender:TObject);
-    procedure rgScrollMouseWheelClick(Sender: TObject);
+    procedure rgMouseWheelModeClick(Sender: TObject);
     procedure rgAlignClick(Sender: TObject);
     procedure rgScrollBtnSymbolsClick(Sender: TObject);
-    procedure SpinEdit1Change(Sender: TObject);
+    procedure seButtonSizeChange(Sender: TObject);
   private
     FPageScroller: TLazPageScroller;
     procedure ChangeOrientationHandler(Sender: TObject);
@@ -82,12 +84,12 @@ begin
   FPageScroller.ScrollDistance := delta;
   FPageScroller.OnChangeOrientation := @ChangeOrientationHandler;
 
-  SpinEdit1.Value := FPageScroller.ButtonSize;
+  seButtonSize.Value := FPageScroller.ButtonSize;
 end;
 
-procedure TForm1.rgScrollMouseWheelClick(Sender: TObject);
+procedure TForm1.rgMouseWheelModeClick(Sender: TObject);
 begin
-  FPageScroller.ScrollMouseWheel := TScrollMouseWheel(rgScrollMouseWheel.ItemIndex);
+  FPageScroller.MouseWheelMode := TScrollMouseWheelMode(rgMouseWheelMode.ItemIndex);
 end;
 
 { This event handler must change the button layout in the panel from left-to-right
@@ -156,9 +158,9 @@ begin
   end;
 end;
 
-procedure TForm1.SpinEdit1Change(Sender: TObject);
+procedure TForm1.seButtonSizeChange(Sender: TObject);
 begin
-  FPageScroller.ButtonSize := SpinEdit1.Value;
+  FPageScroller.ButtonSize := seButtonSize.Value;
 end;
 
 procedure TForm1.cbFlatChange(Sender: TObject);
@@ -179,6 +181,11 @@ begin
   FontDialog1.Font.Assign(FPageScroller.Font);
   if FontDialog1.Execute then
     FPageScroller.Font.Assign(FontDialog1.Font);
+end;
+
+procedure TForm1.cbAutoScrollChange(Sender: TObject);
+begin
+  FPageScroller.AutoScroll := cbAutoScroll.Checked;
 end;
 
 end.

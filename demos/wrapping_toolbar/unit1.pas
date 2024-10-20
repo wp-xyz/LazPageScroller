@@ -13,6 +13,7 @@ type
     cbBackground: TCheckBox;
     cbWrapped: TCheckBox;
     cbFlat: TCheckBox;
+    cbAutoScroll: TCheckBox;
     ImageList1:TImageList;
     ToolBar1:TToolBar;
     ToolButton1:TToolButton;
@@ -35,6 +36,7 @@ type
     ToolButton7:TToolButton;
     ToolButton8:TToolButton;
     ToolButton9:TToolButton;
+    procedure cbAutoScrollChange(Sender: TObject);
     procedure cbBackgroundChange(Sender: TObject);
     procedure cbFlatChange(Sender: TObject);
     procedure cbWrappedChange(Sender: TObject);
@@ -81,6 +83,11 @@ begin
     FPageScroller.Color := clSilver
   else
     FPageScroller.Color := clNone;
+end;
+
+procedure TForm1.cbAutoScrollChange(Sender: TObject);
+begin
+  FPageScroller.AutoScroll := cbAutoScroll.Checked;
 end;
 
 procedure TForm1.cbFlatChange(Sender: TObject);

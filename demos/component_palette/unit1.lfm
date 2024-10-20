@@ -71,21 +71,21 @@ object Form1: TForm1
     TabOrder = 2
     OnClick = rgScrollBtnSymbolsClick
   end
-  object Label1: TLabel
+  object lblButtonSize: TLabel
     Left = 200
     Height = 15
     Top = 204
-    Width = 50
-    Caption = 'BtnWidth'
+    Width = 58
+    Caption = 'Button size'
   end
-  object SpinEdit1: TSpinEdit
-    Left = 264
+  object seButtonSize: TSpinEdit
+    Left = 269
     Height = 23
     Top = 200
     Width = 58
     Alignment = taRightJustify
     TabOrder = 3
-    OnChange = SpinEdit1Change
+    OnChange = seButtonSizeChange
   end
   object Panel1: TPanel
     Left = 48
@@ -99,7 +99,7 @@ object Form1: TForm1
     ParentColor = False
     TabOrder = 4
   end
-  object rgScrollMouseWheel: TRadioGroup
+  object rgMouseWheelMode: TRadioGroup
     Left = 48
     Height = 81
     Top = 168
@@ -122,10 +122,10 @@ object Form1: TForm1
       'reverse'
     )
     TabOrder = 5
-    OnClick = rgScrollMouseWheelClick
+    OnClick = rgMouseWheelModeClick
   end
   object btnFont: TButton
-    Left = 264
+    Left = 269
     Height = 25
     Top = 229
     Width = 50
@@ -143,11 +143,20 @@ object Form1: TForm1
     TabOrder = 7
     OnChange = cbRTLChange
   end
+  object cbAutoScroll: TCheckBox
+    Left = 56
+    Height = 19
+    Top = 259
+    Width = 75
+    Caption = 'Auto scroll'
+    TabOrder = 8
+    OnChange = cbAutoScrollChange
+  end
   object ImageList1: TImageList
     Height = 24
     Scaled = True
     Width = 24
-    Left = 336
+    Left = 368
     Top = 56
     Bitmap = {
       4C7A290000001800000018000000852B00000000000078DAED9D097C1445FAF7
@@ -503,7 +512,7 @@ object Form1: TForm1
   end
   object ArrowImages: TImageList
     Scaled = True
-    Left = 336
+    Left = 368
     Top = 120
     Bitmap = {
       4C7A040000001000000010000000F50000000000000078DAED563B0EC2300C7D

@@ -24,7 +24,7 @@ uses
 
 type
   TScrollButtonSymbol = (sbsDefault, sbsSmallFilled, sbsSmallOpen, {sbsMedFilled, }sbsLargeFilled, sbsLargeOpen);
-  TScrollMouseWheel = (smwDisabled, smwDefault, smwReverse);
+  TScrollMouseWheelMode = (mwmDisabled, mwmDefault, mwmReverse);
   TPageScrollerOrientation = (soHorizontal, soVertical);
 
   TLazPageScroller = class(TCustomControl)
@@ -38,11 +38,11 @@ type
     FButtonSymbol: TScrollButtonSymbol;
     FControl: TControl;
     FControlPanel: TCustomPanel;
+    FMouseWheelMode: TScrollMouseWheelMode;
     FOrientation: TPageScrollerOrientation;
     FScrollBtnUp: TSpeedButton;
     FScrollBtnDown: TSpeedButton;
     FScrollDistance: Integer;
-    FScrollMouseWheel: TScrollMouseWheel;
     FScrollTimer: TTimer;
     FOnChangeOrientation: TNotifyEvent;
     function ButtonSizeIsStored: Boolean;
@@ -102,9 +102,9 @@ type
     property Images: TCustomImageList read GetImages write SetImages;
     property ImagesWidth: Integer read GetImagesWidth write SetImagesWidth;
     property Margin: Integer read GetMargin write SetMargin stored MarginIsStored;
+    property MouseWheelMode: TScrollMouseWheelMode read FMouseWheelMode write FMouseWheelMode default mwmDefault;
     property Orientation: TPageScrollerOrientation read FOrientation write SetOrientation default soHorizontal;
     property ScrollDistance: Integer read FScrollDistance write FScrollDistance default 0;
-    property ScrollMouseWheel: TScrollMouseWheel read FScrollMouseWheel write FScrollMouseWheel default smwDefault;
     property OnChangeOrientation: TNotifyEvent read FOnChangeOrientation write FOnChangeOrientation;
 
     property Align;
@@ -152,7 +152,7 @@ begin
   ControlStyle := ControlStyle + [csAcceptsControls, csClickEvents, csNoFocus, csParentBackground] - [csOpaque];
 
   FButtonSize := DefaultBtnSize;
-  FScrollMouseWheel := smwDefault;
+  FMouseWheelMode := mwmDefault;  // Rotate mouse wheel to scroll the embedded control
 
   FScrollTimer := TTimer.Create(self);
   FScrollTimer.Enabled := false;
@@ -252,9 +252,9 @@ end;
 function TLazPageScroller.DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := Inherited;;
-  if (not Result) and (FScrollMouseWheel <> smwDisabled) then
+  if (not Result) and (FMouseWheelMode <> mwmDisabled) then
   begin
-    InternalScroll(FScrollMouseWheel = smwDefault);
+    InternalScroll(FMouseWheelMode = mwmDefault);
     Result := true;
   end;
 end;
@@ -262,9 +262,9 @@ end;
 function TLazPageScroller.DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := Inherited;;
-  if (not Result) and (FScrollMouseWheel <> smwDisabled) then
+  if (not Result) and (FMouseWheelMode <> mwmDisabled) then
   begin
-    InternalScroll(FScrollMouseWheel = smwReverse);
+    InternalScroll(FMouseWheelMode = mwmReverse);
     Result := true;
   end;
 end;
