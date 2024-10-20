@@ -33,6 +33,7 @@ type
     const
       DefaultBtnSize = 16;
   private
+    FAutoScroll: Boolean;
     FButtonSize: Integer;
     FButtonSymbol: TScrollButtonSymbol;
     FControl: TControl;
@@ -42,6 +43,7 @@ type
     FScrollBtnDown: TSpeedButton;
     FScrollDistance: Integer;
     FScrollMouseWheel: TScrollMouseWheel;
+    FScrollTimer: TTimer;
     FOnChangeOrientation: TNotifyEvent;
     function ButtonSizeIsStored: Boolean;
     function GetFlat: Boolean;
@@ -75,8 +77,11 @@ type
     procedure InternalScroll(Up: Boolean);
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure Resize; override;
-    procedure ScrollButtonClickHandler(Sender: TObject);
     procedure Scroll(ADelta: Integer); virtual;
+    procedure ScrollButtonClickHandler(Sender: TObject);
+    procedure ScrollButtonMouseEnterHandler(Sender: TObject);
+    procedure ScrollButtonMouseLeaveHandler(Sender: TObject);
+    procedure ScrollTimerHandler(Sender: TObject);
     procedure UpdateScrollButtonSize;
     procedure UpdateScrollButtonSymbols;
     procedure UpdateScrollButtonVisibility;
@@ -87,6 +92,7 @@ type
     constructor Create(AOwner: TComponent); override;
 
   published
+    property AutoScroll: Boolean read FAutoScroll write FAutoScroll default false;
     property ButtonSize: Integer read FButtonSize write SetButtonSize stored ButtonSizeIsStored;
     property ButtonSymbol: TScrollButtonSymbol read FButtonSymbol write SetButtonSymbol default sbsDefault;
     property Control: TControl read FControl write SetControl;
@@ -136,6 +142,10 @@ type
 
 implementation
 
+const
+  SCROLL_DOWN_TAG = 0;
+  SCROLL_UP_TAG = 1;
+
 constructor TLazPageScroller.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -144,12 +154,19 @@ begin
   FButtonSize := DefaultBtnSize;
   FScrollMouseWheel := smwDefault;
 
+  FScrollTimer := TTimer.Create(self);
+  FScrollTimer.Enabled := false;
+  FScrollTimer.Interval := 100;
+  FScrollTimer.OnTimer := @ScrollTimerHandler;
+
   FScrollBtnDown := TSpeedButton.Create(self);
   FScrollBtnDown.Parent := self;
   FScrollBtnDown.Width := FButtonSize;
   FScrollBtnDown.Align := alLeft;
   FScrollBtnDown.Caption := '<';
   FScrollBtnDown.OnClick := @ScrollButtonClickHandler;
+  FScrollBtnDown.OnMouseEnter := @ScrollButtonMouseEnterHandler;
+  FScrollBtnDown.OnMouseLeave := @ScrollButtonMouseLeaveHandler;
 
   FScrollBtnUp := TSpeedButton.Create(self);
   FScrollBtnUp.Parent := self;
@@ -157,6 +174,8 @@ begin
   FScrollBtnUp.Align := alRight;
   FScrollBtnUp.Caption := '>';
   FScrollBtnUp.OnClick := @ScrollButtonClickHandler;
+  FScrollBtnUp.OnMouseEnter := @ScrollButtonMouseEnterHandler;
+  FScrollBtnUp.OnMouseLeave := @ScrollButtonMouseLeaveHandler;
 
   FControlPanel := TPanel.Create(Self);
   FControlPanel.Parent := Self;
@@ -388,6 +407,30 @@ procedure TLazPageScroller.ScrollButtonClickHandler(Sender:TObject);
 begin
   if (Sender = FScrollBtnDown) or (Sender = FScrollBtnUp) then
     InternalScroll(Sender = FScrollBtnUp);
+end;
+
+procedure TLazPageScroller.ScrollButtonMouseEnterHandler(Sender: TObject);
+begin
+  if FAutoScroll then
+  begin
+    if Sender = FScrollBtnUp then
+      FScrollTimer.Tag := SCROLL_UP_TAG
+    else
+      FScrollTimer.Tag := SCROLL_DOWN_TAG;
+    FScrollTimer.Enabled := true;
+  end;
+end;
+
+procedure TLazPageScroller.ScrollButtonMouseLeaveHandler(Sender: TObject);
+begin
+  FScrollTimer.Enabled := false;
+end;
+
+{ Handler for the scroll timer which fires when AutoScroll is true and the
+  mouse hovers over one button. }
+procedure TLazPageScroller.ScrollTimerHandler(Sender: TObject);
+begin
+  InternalScroll(FScrollTimer.Tag = SCROLL_UP_TAG);
 end;
 
 procedure TLazPageScroller.SetButtonSize(AValue: Integer);

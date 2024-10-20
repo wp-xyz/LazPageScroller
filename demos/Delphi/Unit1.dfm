@@ -15,9 +15,9 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 542
-    Height = 81
+    Height = 25
     Align = alTop
-    BorderWidth = 20
+    AutoScroll = True
     ButtonSize = 32
     Color = clSilver
     Control = ToolBar1

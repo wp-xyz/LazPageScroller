@@ -12,6 +12,7 @@ type
   TForm1 = class(TForm)
     btnAutoSize: TButton;
     cbFlat: TCheckBox;
+    cbAutoScroll: TCheckBox;
     ImageList1:TImageList;
     lblBtnSize: TLabel;
     lblMargin: TLabel;
@@ -20,6 +21,7 @@ type
     RadioGroup3: TRadioGroup;
     seBtnSize: TSpinEdit;
     seMargin: TSpinEdit;
+    Timer1: TTimer;
     ToolBar1:TToolBar;
     ToolButton1:TToolButton;
     ToolButton10:TToolButton;
@@ -43,6 +45,7 @@ type
     ToolButton9:TToolButton;
     procedure btnAutoSizeClick(Sender: TObject);
     procedure cbFlatChange(Sender: TObject);
+    procedure cbAutoScrollChange(Sender: TObject);
     procedure FormCreate(Sender:TObject);
     procedure RadioGroup1Click(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
@@ -133,6 +136,11 @@ end;
 procedure TForm1.cbFlatChange(Sender: TObject);
 begin
   FPageScroller.Flat := cbFlat.Checked;
+end;
+
+procedure TForm1.cbAutoScrollChange(Sender: TObject);
+begin
+  FPageScroller.AutoScroll := cbAutoScroll.Checked;
 end;
 
 procedure TForm1.btnAutoSizeClick(Sender: TObject);
