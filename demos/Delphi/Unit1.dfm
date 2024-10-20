@@ -15,12 +15,15 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 542
-    Height = 25
+    Height = 81
     Align = alTop
+    BorderWidth = 20
     ButtonSize = 32
+    Color = clSilver
     Control = ToolBar1
+    ParentBackground = False
+    ParentColor = False
     TabOrder = 0
-    ExplicitWidth = 628
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
@@ -230,6 +233,8 @@ object Form1: TForm1
       Align = alClient
       TabOrder = 0
       Text = 'Edit1'
+      ExplicitWidth = 526
+      ExplicitHeight = 23
     end
   end
   object ImageList1: TImageList

@@ -142,14 +142,14 @@ object Form1: TForm1
       ImageIndex = 19
     end
   end
-  object CheckBox1: TCheckBox
+  object cbFlat: TCheckBox
     Left = 168
     Height = 19
-    Top = 232
+    Top = 259
     Width = 37
     Caption = 'Flat'
     TabOrder = 1
-    OnChange = CheckBox1Change
+    OnChange = cbFlatChange
   end
   object RadioGroup1: TRadioGroup
     Left = 48
@@ -200,15 +200,15 @@ object Form1: TForm1
     TabOrder = 3
     OnClick = RadioGroup2Click
   end
-  object Button1: TButton
+  object btnAutoSize: TButton
     Left = 233
     Height = 25
-    Top = 229
+    Top = 256
     Width = 72
     AutoSize = True
     Caption = 'AutoSize'
     TabOrder = 4
-    OnClick = Button1Click
+    OnClick = btnAutoSizeClick
   end
   object RadioGroup3: TRadioGroup
     Left = 160
@@ -253,6 +253,22 @@ object Form1: TForm1
     Alignment = taRightJustify
     TabOrder = 6
     OnChange = seBtnSizeChange
+  end
+  object lblMargin: TLabel
+    Left = 168
+    Height = 15
+    Top = 232
+    Width = 38
+    Caption = 'Margin'
+  end
+  object seMargin: TSpinEdit
+    Left = 233
+    Height = 23
+    Top = 228
+    Width = 72
+    Alignment = taRightJustify
+    TabOrder = 7
+    OnChange = seMarginChange
   end
   object ImageList1: TImageList
     Left = 128

@@ -10,14 +10,16 @@ uses
 
 type
   TForm1 = class(TForm)
-    Button1: TButton;
-    CheckBox1: TCheckBox;
+    btnAutoSize: TButton;
+    cbFlat: TCheckBox;
     ImageList1:TImageList;
     lblBtnSize: TLabel;
+    lblMargin: TLabel;
     RadioGroup1: TRadioGroup;
     RadioGroup2: TRadioGroup;
     RadioGroup3: TRadioGroup;
     seBtnSize: TSpinEdit;
+    seMargin: TSpinEdit;
     ToolBar1:TToolBar;
     ToolButton1:TToolButton;
     ToolButton10:TToolButton;
@@ -39,13 +41,14 @@ type
     ToolButton7:TToolButton;
     ToolButton8:TToolButton;
     ToolButton9:TToolButton;
-    procedure Button1Click(Sender: TObject);
-    procedure CheckBox1Change(Sender: TObject);
+    procedure btnAutoSizeClick(Sender: TObject);
+    procedure cbFlatChange(Sender: TObject);
     procedure FormCreate(Sender:TObject);
     procedure RadioGroup1Click(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
     procedure RadioGroup3Click(Sender: TObject);
     procedure seBtnSizeChange(Sender: TObject);
+    procedure seMarginChange(Sender: TObject);
   private
     FPageScroller: TLazPageScroller;
     procedure ChangeOrientationHandler(Sender: TObject);
@@ -122,12 +125,17 @@ begin
   FPageScroller.ButtonSize := seBtnSize.Value;
 end;
 
-procedure TForm1.CheckBox1Change(Sender: TObject);
+procedure TForm1.seMarginChange(Sender: TObject);
 begin
-  FPageScroller.Flat := Checkbox1.Checked;
+  FPageScroller.Margin := seMargin.Value;
 end;
 
-procedure TForm1.Button1Click(Sender: TObject);
+procedure TForm1.cbFlatChange(Sender: TObject);
+begin
+  FPageScroller.Flat := cbFlat.Checked;
+end;
+
+procedure TForm1.btnAutoSizeClick(Sender: TObject);
 begin
   FPageScroller.AutoSize := true;
 end;

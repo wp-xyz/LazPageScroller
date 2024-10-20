@@ -49,6 +49,8 @@ type
     function GetImageIndexUp: TImageIndex;
     function GetImages: TCustomImageList;
     function GetImagesWidth: Integer;
+    function GetMargin: Integer;
+    function MarginIsStored: Boolean;
     procedure SetButtonSize(AValue: Integer);
     procedure SetButtonSymbol(AValue: TScrollButtonSymbol);
     procedure SetControl(AValue: TControl);
@@ -57,6 +59,7 @@ type
     procedure SetImageIndexUp(AValue: TImageIndex);
     procedure SetImages(AValue: TCustomImageList);
     procedure SetImagesWidth(AValue: Integer);
+    procedure SetMargin(AValue: Integer);
     procedure SetOrientation(AValue: TPageScrollerOrientation);
 
   protected
@@ -92,6 +95,7 @@ type
     property ImageIndexUp: TImageIndex read GetImageIndexUp write SetImageIndexUp default -1;
     property Images: TCustomImageList read GetImages write SetImages;
     property ImagesWidth: Integer read GetImagesWidth write SetImagesWidth;
+    property Margin: Integer read GetMargin write SetMargin stored MarginIsStored;
     property Orientation: TPageScrollerOrientation read FOrientation write SetOrientation default soHorizontal;
     property ScrollDistance: Integer read FScrollDistance write FScrollDistance default 0;
     property ScrollMouseWheel: TScrollMouseWheel read FScrollMouseWheel write FScrollMouseWheel default smwDefault;
@@ -174,7 +178,11 @@ procedure TLazPageScroller.CalculatePreferredSize(var PreferredWidth, PreferredH
   WithThemeSpace: Boolean);
 begin
   if Assigned(FControl) then
+  begin
     FControl.GetPreferredSize(PreferredWidth, PreferredHeight, false, WithThemeSpace);
+    inc(PreferredWidth, 2*FControlPanel.BorderSpacing.Around);
+    inc(PreferredHeight, 2*FControlPanel.BorderSpacing.Around);
+  end;
 end;
 
 procedure TLazPageScroller.CMBiDiModeChanged(var Message: TLMessage);
@@ -273,6 +281,11 @@ begin
   Result := FScrollBtnUp.ImageWidth;
 end;
 
+function TLazPageScroller.GetMargin: Integer;
+begin
+  Result := FControlPanel.BorderSpacing.Around;
+end;
+
 { Returns the distance to be scrolled (in pixels) when a scroll button is clicked.
   This normally is the value of the ScrollDistance property, but when that is
   0 (or negative) scrolling goes by a full page (width/height of the scroller). }
@@ -294,6 +307,11 @@ begin
   dist := GetScrollDistance;
   if Up then dist := -dist;
   Scroll(dist);
+end;
+
+function TLazPageScroller.MarginIsStored: Boolean;
+begin
+  Result := GetMargin <> 0;
 end;
 
 procedure TLazPageScroller.Notification(AComponent: TComponent;
@@ -458,6 +476,11 @@ begin
     FScrollBtnDown.ImageWidth := AValue;
     FScrollBtnUp.ImageWidth := AValue;
   end;
+end;
+
+procedure TLazPageScroller.SetMargin(AValue: Integer);
+begin
+  FControlPanel.BorderSpacing.Around := AValue;
 end;
 
 { Rotates the scroller from horizontal to vertical orientation, or vice versa.
