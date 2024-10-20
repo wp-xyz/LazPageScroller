@@ -4,7 +4,7 @@ unit Unit1;
 
 interface
 
-uses                                                  LazLogger,
+uses
   Buttons, Classes, ComCtrls, ExtCtrls, Spin, StdCtrls, SysUtils, Forms,
   Controls, Graphics, Dialogs, PgScroller;
 
@@ -82,7 +82,7 @@ begin
   FPageScroller.ScrollDistance := delta;
   FPageScroller.OnChangeOrientation := @ChangeOrientationHandler;
 
-  SpinEdit1.Value := FPageScroller.BtnSize;
+  SpinEdit1.Value := FPageScroller.ButtonSize;
 end;
 
 procedure TForm1.rgScrollMouseWheelClick(Sender: TObject);
@@ -152,13 +152,13 @@ begin
   end else
   begin
     FPageScroller.Images := nil;
-    FPageScroller.BtnSymbol := TScrollBtnSymbol(rgScrollBtnSymbols.ItemIndex);
+    FPageScroller.ButtonSymbol := TScrollButtonSymbol(rgScrollBtnSymbols.ItemIndex);
   end;
 end;
 
 procedure TForm1.SpinEdit1Change(Sender: TObject);
 begin
-  FPageScroller.BtnSize := SpinEdit1.Value;
+  FPageScroller.ButtonSize := SpinEdit1.Value;
 end;
 
 procedure TForm1.cbFlatChange(Sender: TObject);

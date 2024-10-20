@@ -13,11 +13,11 @@ type
     Button1: TButton;
     CheckBox1: TCheckBox;
     ImageList1:TImageList;
-    Label1: TLabel;
+    lblBtnSize: TLabel;
     RadioGroup1: TRadioGroup;
     RadioGroup2: TRadioGroup;
     RadioGroup3: TRadioGroup;
-    SpinEdit1: TSpinEdit;
+    seBtnSize: TSpinEdit;
     ToolBar1:TToolBar;
     ToolButton1:TToolButton;
     ToolButton10:TToolButton;
@@ -45,7 +45,7 @@ type
     procedure RadioGroup1Click(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
     procedure RadioGroup3Click(Sender: TObject);
-    procedure SpinEdit1Change(Sender: TObject);
+    procedure seBtnSizeChange(Sender: TObject);
   private
     FPageScroller: TLazPageScroller;
     procedure ChangeOrientationHandler(Sender: TObject);
@@ -75,7 +75,7 @@ begin
   FPageScroller.ScrollDistance := Toolbar1.ButtonWidth;
   FPageScroller.OnChangeOrientation := @ChangeOrientationHandler;
 
-  SpinEdit1.Value := FPageScroller.BtnSize;
+  seBtnSize.Value := FPageScroller.ButtonSize;
 end;
 
 procedure TForm1.ChangeOrientationHandler(Sender: TObject);
@@ -113,13 +113,13 @@ begin
   end else
   begin
     FPageScroller.Images := nil;
-    FPageScroller.BtnSymbol := TScrollBtnSymbol(RadioGroup3.ItemIndex);
+    FPageScroller.ButtonSymbol := TScrollButtonSymbol(RadioGroup3.ItemIndex);
   end;
 end;
 
-procedure TForm1.SpinEdit1Change(Sender: TObject);
+procedure TForm1.seBtnSizeChange(Sender: TObject);
 begin
-  FPageScroller.BtnSize := SpinEdit1.Value;
+  FPageScroller.ButtonSize := seBtnSize.Value;
 end;
 
 procedure TForm1.CheckBox1Change(Sender: TObject);

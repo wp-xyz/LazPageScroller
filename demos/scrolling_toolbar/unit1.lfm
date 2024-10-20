@@ -201,7 +201,7 @@ object Form1: TForm1
     OnClick = RadioGroup2Click
   end
   object Button1: TButton
-    Left = 232
+    Left = 233
     Height = 25
     Top = 229
     Width = 72
@@ -238,21 +238,21 @@ object Form1: TForm1
     TabOrder = 5
     OnClick = RadioGroup3Click
   end
-  object Label1: TLabel
+  object lblBtnSize: TLabel
     Left = 168
     Height = 15
     Top = 204
-    Width = 50
-    Caption = 'BtnWidth'
+    Width = 58
+    Caption = 'Button size'
   end
-  object SpinEdit1: TSpinEdit
-    Left = 232
+  object seBtnSize: TSpinEdit
+    Left = 233
     Height = 23
     Top = 200
-    Width = 58
+    Width = 72
     Alignment = taRightJustify
     TabOrder = 6
-    OnChange = SpinEdit1Change
+    OnChange = seBtnSizeChange
   end
   object ImageList1: TImageList
     Left = 128

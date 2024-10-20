@@ -66,7 +66,7 @@ object Form1: TForm1
     TabOrder = 2
     OnClick = RadioGroup2Click
   end
-  object RadioGroup3: TRadioGroup
+  object rgScrollBtnSymbols: TRadioGroup
     Left = 160
     Height = 145
     Top = 48
@@ -92,23 +92,23 @@ object Form1: TForm1
       'from imagelist'
     )
     TabOrder = 3
-    OnClick = RadioGroup3Click
+    OnClick = rgScrollBtnSymbolsClick
   end
-  object Label1: TLabel
+  object lblBtnSize: TLabel
     Left = 168
     Height = 15
     Top = 204
-    Width = 50
-    Caption = 'BtnWidth'
+    Width = 58
+    Caption = 'Button size'
   end
-  object SpinEdit1: TSpinEdit
-    Left = 232
+  object seBtnSize: TSpinEdit
+    Left = 240
     Height = 23
     Top = 200
     Width = 58
     Alignment = taRightJustify
     TabOrder = 4
-    OnChange = SpinEdit1Change
+    OnChange = seBtnSizeChange
   end
   object Edit1: TEdit
     Left = 16

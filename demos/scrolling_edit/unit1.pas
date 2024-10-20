@@ -13,17 +13,17 @@ type
     CheckBox1: TCheckBox;
     Edit1: TEdit;
     ImageList1:TImageList;
-    Label1: TLabel;
+    lblBtnSize: TLabel;
     RadioGroup1: TRadioGroup;
     RadioGroup2: TRadioGroup;
-    RadioGroup3: TRadioGroup;
-    SpinEdit1: TSpinEdit;
+    rgScrollBtnSymbols: TRadioGroup;
+    seBtnSize: TSpinEdit;
     procedure CheckBox1Change(Sender: TObject);
     procedure FormCreate(Sender:TObject);
     procedure RadioGroup1Click(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
-    procedure RadioGroup3Click(Sender: TObject);
-    procedure SpinEdit1Change(Sender: TObject);
+    procedure rgScrollBtnSymbolsClick(Sender: TObject);
+    procedure seBtnSizeChange(Sender: TObject);
   private
     FPageScroller: TLazPageScroller;
 
@@ -51,7 +51,7 @@ begin
   FPageScroller.AutoSize := true;
   RadioGroup1Click(nil);
 
-  SpinEdit1.Value := FPageScroller.BtnSize;
+  seBtnSize.Value := FPageScroller.ButtonSize;
 end;
 
 procedure TForm1.RadioGroup1Click(Sender: TObject);
@@ -71,9 +71,9 @@ begin
   end;
 end;
 
-procedure TForm1.RadioGroup3Click(Sender: TObject);
+procedure TForm1.rgScrollBtnSymbolsClick(Sender: TObject);
 begin
-  if RadioGroup3.ItemIndex = Radiogroup3.Items.Count-1 then
+  if rgScrollBtnSymbols.ItemIndex = rgScrollBtnSymbols.Items.Count-1 then
   begin
     FPageScroller.Images := ImageList1;
     FPageScroller.ImageIndexDown := 21;
@@ -81,13 +81,13 @@ begin
   end else
   begin
     FPageScroller.Images := nil;
-    FPageScroller.BtnSymbol := TScrollBtnSymbol(RadioGroup3.ItemIndex);
+    FPageScroller.ButtonSymbol := TScrollButtonSymbol(rgScrollBtnSymbols.ItemIndex);
   end;
 end;
 
-procedure TForm1.SpinEdit1Change(Sender: TObject);
+procedure TForm1.seBtnSizeChange(Sender: TObject);
 begin
-  FPageScroller.BtnSize := SpinEdit1.Value;
+  FPageScroller.ButtonSize := seBtnSize.Value;
 end;
 
 procedure TForm1.CheckBox1Change(Sender: TObject);

@@ -23,7 +23,7 @@ uses
   Graphics, LMessages, Controls, ExtCtrls, ComCtrls, Buttons, ImgList;
 
 type
-  TScrollBtnSymbol = (sbsDefault, sbsSmallFilled, sbsSmallOpen, {sbsMedFilled, }sbsLargeFilled, sbsLargeOpen);
+  TScrollButtonSymbol = (sbsDefault, sbsSmallFilled, sbsSmallOpen, {sbsMedFilled, }sbsLargeFilled, sbsLargeOpen);
   TScrollMouseWheel = (smwDisabled, smwDefault, smwReverse);
   TPageScrollerOrientation = (soHorizontal, soVertical);
 
@@ -33,8 +33,8 @@ type
     const
       DefaultBtnSize = 16;
   private
-    FBtnSize: Integer;
-    FBtnSymbol: TScrollBtnSymbol;
+    FButtonSize: Integer;
+    FButtonSymbol: TScrollButtonSymbol;
     FControl: TControl;
     FControlPanel: TCustomPanel;
     FOrientation: TPageScrollerOrientation;
@@ -43,14 +43,14 @@ type
     FScrollDistance: Integer;
     FScrollMouseWheel: TScrollMouseWheel;
     FOnChangeOrientation: TNotifyEvent;
-    function BtnSizeIsStored: Boolean;
+    function ButtonSizeIsStored: Boolean;
     function GetFlat: Boolean;
     function GetImageIndexDown: TImageIndex;
     function GetImageIndexUp: TImageIndex;
     function GetImages: TCustomImageList;
     function GetImagesWidth: Integer;
-    procedure SetBtnSize(AValue: Integer);
-    procedure SetBtnSymbol(AValue: TScrolLBtnSymbol);
+    procedure SetButtonSize(AValue: Integer);
+    procedure SetButtonSymbol(AValue: TScrollButtonSymbol);
     procedure SetControl(AValue: TControl);
     procedure SetFlat(AValue: Boolean);
     procedure SetImageIndexDown(AValue: TImageIndex);
@@ -72,11 +72,11 @@ type
     procedure InternalScroll(Up: Boolean);
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure Resize; override;
-    procedure ScrollBtnClickHandler(Sender: TObject);
+    procedure ScrollButtonClickHandler(Sender: TObject);
     procedure Scroll(ADelta: Integer); virtual;
-    procedure UpdateScrollBtnSize;
-    procedure UpdateScrollBtnSymbols;
-    procedure UpdateScrollBtnVisibility;
+    procedure UpdateScrollButtonSize;
+    procedure UpdateScrollButtonSymbols;
+    procedure UpdateScrollButtonVisibility;
 
     procedure CMBiDiModeChanged(var Message: TLMessage); message CM_BIDIMODECHANGED;
 
@@ -84,8 +84,8 @@ type
     constructor Create(AOwner: TComponent); override;
 
   published
-    property BtnSize: Integer read FBtnSize write SetBtnSize stored BtnSizeIsStored;
-    property BtnSymbol: TScrollBtnSymbol read FBtnSymbol write SetBtnSymbol default sbsDefault;
+    property ButtonSize: Integer read FButtonSize write SetButtonSize stored ButtonSizeIsStored;
+    property ButtonSymbol: TScrollButtonSymbol read FButtonSymbol write SetButtonSymbol default sbsDefault;
     property Control: TControl read FControl write SetControl;
     property Flat: Boolean read GetFlat write SetFlat default false;
     property ImageIndexDown: TImageIndex read GetImageIndexDown write SetImageIndexDown default -1;
@@ -137,22 +137,22 @@ begin
   inherited Create(AOwner);
   ControlStyle := ControlStyle + [csAcceptsControls, csClickEvents, csNoFocus, csParentBackground] - [csOpaque];
 
-  FBtnSize := DefaultBtnSize;
+  FButtonSize := DefaultBtnSize;
   FScrollMouseWheel := smwDefault;
 
   FScrollBtnDown := TSpeedButton.Create(self);
   FScrollBtnDown.Parent := self;
-  FScrollBtnDown.Width := FBtnSize;
+  FScrollBtnDown.Width := FButtonSize;
   FScrollBtnDown.Align := alLeft;
   FScrollBtnDown.Caption := '<';
-  FScrollBtnDown.OnClick := @ScrollBtnClickHandler;
+  FScrollBtnDown.OnClick := @ScrollButtonClickHandler;
 
   FScrollBtnUp := TSpeedButton.Create(self);
   FScrollBtnUp.Parent := self;
-  FScrollBtnUp.Width := FBtnSize;
+  FScrollBtnUp.Width := FButtonSize;
   FScrollBtnUp.Align := alRight;
   FScrollBtnUp.Caption := '>';
-  FScrollBtnUp.OnClick := @ScrollBtnClickHandler;
+  FScrollBtnUp.OnClick := @ScrollButtonClickHandler;
 
   FControlPanel := TPanel.Create(Self);
   FControlPanel.Parent := Self;
@@ -164,9 +164,9 @@ begin
     SetInitialBounds(0, 0, CX, CY);
 end;
 
-function TLazPageScroller.BtnSizeIsStored: Boolean;
+function TLazPageScroller.ButtonSizeIsStored: Boolean;
 begin
-  Result := FBtnSize <> DefaultBtnSize;
+  Result := FButtonSize <> DefaultBtnSize;
 end;
 
 { Calculates the size used when AutoSize is active. }
@@ -211,8 +211,8 @@ begin
   inherited;
   if AMode in [lapAutoAdjustWithoutHorizontalScrolling, lapAutoAdjustForDPI] then
   begin
-    if BtnSizeIsStored then
-      FBtnSize := round(FBtnSize * AXProportion);
+    if ButtonSizeIsStored then
+      FButtonSize := round(FButtonSize * AXProportion);
   end;
 end;
 
@@ -361,36 +361,36 @@ begin
           FControl.Top := p;
         end;
     end;
-    UpdateScrollBtnVisibility;
+    UpdateScrollButtonVisibility;
   end;
 end;
 
 { Handler for the OnClick event of the scroll buttons. }
-procedure TLazPageScroller.ScrollBtnClickHandler(Sender:TObject);
+procedure TLazPageScroller.ScrollButtonClickHandler(Sender:TObject);
 begin
-  if (Sender = FScrollBtndown) or (Sender = FScrollBtnUp) then
+  if (Sender = FScrollBtnDown) or (Sender = FScrollBtnUp) then
     InternalScroll(Sender = FScrollBtnUp);
 end;
 
-procedure TLazPageScroller.SetBtnSize(AValue: Integer);
+procedure TLazPageScroller.SetButtonSize(AValue: Integer);
 begin
-  if AValue <> FBtnSize then
+  if AValue <> FButtonSize then
   begin
-    FBtnSize := AValue;
-    UpdateScrollBtnSize;
+    FButtonSize := AValue;
+    UpdateScrollButtonSize;
   end;
 end;
 
-{ BtnSymbol defines the arrow symbol drawn on the scroll buttons. These are
+{ ButtonSymbol defines the arrow symbol drawn on the scroll buttons. These are
   special ASCII or UTF8 characters. When an ImageList is assigned to the
   PageScroller, however, the icons at ImageIndexDown and ImageIndexUp are
   displayed instead. }
-procedure TLazPageScroller.SetBtnSymbol(AValue: TScrollBtnSymbol);
+procedure TLazPageScroller.SetButtonSymbol(AValue: TScrollButtonSymbol);
 begin
-  if FBtnSymbol <> AValue then
+  if FButtonSymbol <> AValue then
   begin
-    FBtnSymbol := AValue;
-    UpdateScrollBtnSymbols;
+    FButtonSymbol := AValue;
+    UpdateScrollButtonSymbols;
   end;
 end;
 
@@ -415,7 +415,7 @@ begin
         FControl.Left := 0;
       FControl.Top := 0;
     end;
-    UpdateScrollBtnVisibility;
+    UpdateScrollButtonVisibility;
   end;
 end;
 
@@ -476,7 +476,7 @@ begin
   case FOrientation of
     soHorizontal:
       begin
-        FScrolLBtnDown.Align := alLeft;
+        FScrollBtnDown.Align := alLeft;
         FScrollBtnUp.Align := alRight;
       end;
     soVertical:
@@ -485,28 +485,28 @@ begin
         FScrollBtnUp.Align := alBottom;
       end;
   end;
-  UpdateScrollBtnSize;
-  UpdateScrollBtnSymbols;
+  UpdateScrollButtonSize;
+  UpdateScrollButtonSymbols;
   DoChangeOrientation;
 end;
 
-procedure TLazPageScroller.UpdateScrollBtnSize;
+procedure TLazPageScroller.UpdateScrollButtonSize;
 begin
   case FOrientation of
     soHorizontal:
       begin
-        FScrollBtnDown.Width := FBtnSize;
-        FScrollBtnUp.Width := FBtnSize;
+        FScrollBtnDown.Width := FButtonSize;
+        FScrollBtnUp.Width := FButtonSize;
       end;
     soVertical:
       begin
-        FScrollBtndown.Height := FBtnSize;
-        FScrolLBtnUp.Height := FBtnSize;
+        FScrollBtndown.Height := FButtonSize;
+        FScrolLBtnUp.Height := FButtonSize;
       end;
   end;
 end;
 
-procedure TLazPageScroller.UpdateScrollBtnSymbols;
+procedure TLazPageScroller.UpdateScrollButtonSymbols;
 
   procedure SetSymbols(ALeft, ARight, AUp, ADown: String);
   begin
@@ -525,7 +525,7 @@ procedure TLazPageScroller.UpdateScrollBtnSymbols;
   end;
 
 begin
-  case FBtnSymbol of
+  case FButtonSymbol of
     sbsDefault: SetSymbols('<', '>', '^', 'v');      // ASCII
     sbsSmallFilled: SetSymbols(#$E2#$97#$82, #$E2#$96#$B8, #$E2#$96#$B4, #$E2#$96#$BE);    // "Geometric shapes" UTF8 range
     sbsSmallOpen: SetSymbols(#$E2#$97#$83, #$E2#$96#$B9, #$E2#$96#$B5, #$E2#$96#$BF);      // "Geometric shapes" UTF8 range
@@ -535,7 +535,7 @@ begin
   end;
 end;
 
-procedure TLazPageScroller.UpdateScrollBtnVisibility;
+procedure TLazPageScroller.UpdateScrollButtonVisibility;
 begin
   if FControl <> nil then
     case FOrientation of

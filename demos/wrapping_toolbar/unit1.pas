@@ -10,7 +10,9 @@ uses
 
 type
   TForm1 = class(TForm)
-    CheckBox2: TCheckBox;
+    cbBackground: TCheckBox;
+    cbWrapped: TCheckBox;
+    cbFlat: TCheckBox;
     ImageList1:TImageList;
     ToolBar1:TToolBar;
     ToolButton1:TToolButton;
@@ -33,7 +35,9 @@ type
     ToolButton7:TToolButton;
     ToolButton8:TToolButton;
     ToolButton9:TToolButton;
-    procedure CheckBox2Change(Sender: TObject);
+    procedure cbBackgroundChange(Sender: TObject);
+    procedure cbFlatChange(Sender: TObject);
+    procedure cbWrappedChange(Sender: TObject);
     procedure FormCreate(Sender:TObject);
   private
     FPageScroller: TLazPageScroller;
@@ -63,12 +67,25 @@ begin
   FPageScroller.ScrollDistance := Toolbar1.ButtonWidth;
 end;
 
-procedure TForm1.CheckBox2Change(Sender: TObject);
+procedure TForm1.cbWrappedChange(Sender: TObject);
 begin
-  if checkbox2.Checked then
+  if cbWrapped.Checked then
     Toolbar1.Align := alClient
   else
     Toolbar1.Align := alNone;
+end;
+
+procedure TForm1.cbBackgroundChange(Sender: TObject);
+begin
+  if cbBackground.Checked then
+    FPageScroller.Color := clSilver
+  else
+    FPageScroller.Color := clNone;
+end;
+
+procedure TForm1.cbFlatChange(Sender: TObject);
+begin
+  FPageScroller.Flat := cbFlat.Checked;
 end;
 
 end.
