@@ -19,8 +19,8 @@ unit PgScroller;
 interface
 
 uses
-  Classes, SysUtils, Types,
-  Graphics, Controls, ExtCtrls, ComCtrls, Buttons, ImgList;
+  Classes, SysUtils, Types, LazLoggerBase,
+  Graphics, LMessages, Controls, ExtCtrls, ComCtrls, Buttons, ImgList;
 
 type
   TScrollBtnSymbol = (sbsDefault, sbsSmallFilled, sbsSmallOpen, {sbsMedFilled, }sbsLargeFilled, sbsLargeOpen);
@@ -77,6 +77,8 @@ type
     procedure UpdateScrollBtnSize;
     procedure UpdateScrollBtnSymbols;
     procedure UpdateScrollBtnVisibility;
+
+    procedure CMBiDiModeChanged(var Message: TLMessage); message CM_BIDIMODECHANGED;
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -173,6 +175,33 @@ procedure TLazPageScroller.CalculatePreferredSize(var PreferredWidth, PreferredH
 begin
   if Assigned(FControl) then
     FControl.GetPreferredSize(PreferredWidth, PreferredHeight, false, WithThemeSpace);
+end;
+
+procedure TLazPageScroller.CMBiDiModeChanged(var Message: TLMessage);
+begin
+  inherited;
+  if Orientation = soHorizontal then
+  begin
+    if IsRightToLeft then
+    begin
+      FScrollBtnDown.Align := alRight;
+      FScrollBtnUp.Align := alLeft;
+      if Assigned(FControl) then begin
+        FControl.Anchors := [akTop, akRight];
+        FControl.Left := FControlPanel.ClientWidth - FControl.Width;
+      end;
+    end else
+    begin
+      FScrollBtnDown.Align := alLeft;
+      FScrollBtnUp.Align := alRight;
+      if Assigned(FControl) then
+      begin
+        FControl.Anchors := [akLeft, akTop];
+        FControl.Left := 0;
+      end;
+    end;
+  end else
+    FControl.Anchors := [akLeft, akTop];
 end;
 
 { Called by LCL scaling when the monitor resolution changes. }
@@ -291,28 +320,45 @@ end;
   position of the embedded control. }
 procedure TLazPageScroller.Scroll(ADelta: Integer);
 var
-  L, T: Integer;
+  p: Integer;  // Control's anchor position
 begin
   if Assigned(FControl) then
   begin
     case FOrientation of
       soHorizontal:
+        if IsRightToLeft then
         begin
-          L := FControl.Left + ADelta;
-          if L + FControl.Width < FControlPanel.Width then
-            L := FControlPanel.Width - FControl.Width;
-          if L > 0 then
-            L := 0;
-          FControl.Left := L;
+          // p is the position of the control's right side
+          if FControl.Width < FControlPanel.Width then
+            p := FControlPanel.Width
+          else
+          begin
+            p := FControl.Left + FControl.Width - ADelta;
+            if p < FControlPanel.Width then
+              p := FControlPanel.Width;
+            if p - FControl.Width > 0 then
+              p := FControl.Width;
+          end;
+          FControl.Left := p - FControl.Width;
+        end else
+        begin
+          // p is the position of the control's left side
+          p := FControl.Left + ADelta;
+          if p + FControl.Width < FControlPanel.Width then
+            p := FControlPanel.Width - FControl.Width;
+          if p > 0 then
+            p := 0;
+          FControl.Left := p;
         end;
       soVertical:
         begin
-          T := FControl.Top + ADelta;
-          if T + FControl.Height < FControlPanel.Height then
-            T := FControlPanel.Height - FControl.Height;
-          if T > 0 then
-            T := 0;
-          FControl.Top := T;
+          // p is the position of the control's top side
+          p := FControl.Top + ADelta;
+          if p + FControl.Height < FControlPanel.Height then
+            p := FControlPanel.Height - FControl.Height;
+          if p > 0 then
+            p := 0;
+          FControl.Top := p;
         end;
     end;
     UpdateScrollBtnVisibility;
@@ -360,9 +406,15 @@ begin
   if FControl <> AValue then
   begin
     FControl := AValue;
-    FControl.Parent := FControlPanel;
-    FControl.Left := 0;
-    FControl.Top := 0;
+    if Assigned(FControl) then
+    begin
+      FControl.Parent := FControlPanel;
+      if (FOrientation = soHorizontal) and IsRightToLeft then
+        FControl.Left := FControlPanel.Width - FControl.Width
+      else
+        FControl.Left := 0;
+      FControl.Top := 0;
+    end;
     UpdateScrollBtnVisibility;
   end;
 end;
@@ -488,6 +540,11 @@ begin
   if FControl <> nil then
     case FOrientation of
       soHorizontal:
+        if IsRightToLeft then
+        begin
+          FScrollBtnDown.Visible := FControl.Left + FControl.Width > FControlPanel.Width;
+          FScrollBtnUp.Visible := FControl.Left < 0;
+        end else
         begin
           FScrollBtnDown.Visible := FControl.Left < 0;
           FScrollBtnUp.Visible := FControl.Left + FControl.Width > FControlPanel.Width;
@@ -497,10 +554,13 @@ begin
           FScrollBtnDown.Visible := FControl.Top < 0;
           FScrollBtnUp.Visible := FControl.Top + FControl.Height > FControlPanel.Height;
         end;
-    end;
+    end
+  else
+  begin
+    FScrollBtnUp.Visible := false;
+    FScrollBtnDown.Visible := false;
+  end;
 end;
-
-
 
 procedure TToolbarHelper.SetOrientation(AValue: TPageScrollerOrientation);
 var

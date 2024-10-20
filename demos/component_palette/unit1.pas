@@ -4,14 +4,15 @@ unit Unit1;
 
 interface
 
-uses
+uses                                                  LazLogger,
   Buttons, Classes, ComCtrls, ExtCtrls, Spin, StdCtrls, SysUtils, Forms,
   Controls, Graphics, Dialogs, PgScroller;
 
 type
   TForm1 = class(TForm)
-    Button1: TButton;
-    CheckBox1: TCheckBox;
+    btnFont: TButton;
+    cbFlat: TCheckBox;
+    cbRTL: TCheckBox;
     FontDialog1: TFontDialog;
     ImageList1:TImageList;
     ArrowImages: TImageList;
@@ -21,8 +22,9 @@ type
     rgAlign: TRadioGroup;
     rgScrollBtnSymbols: TRadioGroup;
     SpinEdit1: TSpinEdit;
-    procedure Button1Click(Sender: TObject);
-    procedure CheckBox1Change(Sender: TObject);
+    procedure btnFontClick(Sender: TObject);
+    procedure cbFlatChange(Sender: TObject);
+    procedure cbRTLChange(Sender: TObject);
     procedure FormCreate(Sender:TObject);
     procedure rgScrollMouseWheelClick(Sender: TObject);
     procedure rgAlignClick(Sender: TObject);
@@ -54,7 +56,7 @@ begin
   Panel1.ChildSizing.ControlsPerLine := 9999;
   Panel1.ChildSizing.Layout := cclLeftToRightThenTopToBottom;
 
-  for i := 0 to ImageList1.Count-1 do
+  for i := 0 to 19 do
     with TSpeedButton.Create(self) do
     begin
       Width := 30;
@@ -73,7 +75,6 @@ begin
   FPageScroller.Parent := self;
 //  FPageScroller.Color := clRed;
   FPageScroller.Top := 0;
-  FPageScroller.Height := 40;  // Just for testing AutoSize...
   FPageScroller.Align := alTop;
   FPageScroller.Control := Panel1;
   FPageScroller.AutoSize := true;
@@ -160,12 +161,20 @@ begin
   FPageScroller.BtnSize := SpinEdit1.Value;
 end;
 
-procedure TForm1.CheckBox1Change(Sender: TObject);
+procedure TForm1.cbFlatChange(Sender: TObject);
 begin
-  FPageScroller.Flat := Checkbox1.Checked;
+  FPageScroller.Flat := cbFlat.Checked;
 end;
 
-procedure TForm1.Button1Click(Sender: TObject);
+procedure TForm1.cbRTLChange(Sender: TObject);
+begin
+  if cbRTL.Checked then
+    FPageScroller.BiDiMode := bdRightToLeft
+  else
+    FPageScroller.BiDiMode := bdLeftToRight;
+end;
+
+procedure TForm1.btnFontClick(Sender: TObject);
 begin
   FontDialog1.Font.Assign(FPageScroller.Font);
   if FontDialog1.Execute then

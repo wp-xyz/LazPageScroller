@@ -8,14 +8,14 @@ object Form1: TForm1
   ClientWidth = 529
   LCLVersion = '4.99.0.0'
   OnCreate = FormCreate
-  object CheckBox1: TCheckBox
+  object cbFlat: TCheckBox
     Left = 200
     Height = 19
     Top = 232
     Width = 37
     Caption = 'Flat'
     TabOrder = 0
-    OnChange = CheckBox1Change
+    OnChange = cbFlatChange
   end
   object rgAlign: TRadioGroup
     Left = 48
@@ -88,9 +88,9 @@ object Form1: TForm1
     OnChange = SpinEdit1Change
   end
   object Panel1: TPanel
-    Left = 32
-    Height = 50
-    Top = 256
+    Left = 48
+    Height = 40
+    Top = 0
     Width = 279
     BevelOuter = bvNone
     Caption = 'Buttons will be created at runtime...'
@@ -124,7 +124,7 @@ object Form1: TForm1
     TabOrder = 5
     OnClick = rgScrollMouseWheelClick
   end
-  object Button1: TButton
+  object btnFont: TButton
     Left = 264
     Height = 25
     Top = 229
@@ -132,7 +132,16 @@ object Form1: TForm1
     AutoSize = True
     Caption = 'Font'
     TabOrder = 6
-    OnClick = Button1Click
+    OnClick = btnFontClick
+  end
+  object cbRTL: TCheckBox
+    Left = 200
+    Height = 19
+    Top = 259
+    Width = 84
+    Caption = 'Right-to-left'
+    TabOrder = 7
+    OnChange = cbRTLChange
   end
   object ImageList1: TImageList
     Height = 24
