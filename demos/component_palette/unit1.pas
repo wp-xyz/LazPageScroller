@@ -46,6 +46,8 @@ implementation
 {$R *.lfm}
 
 procedure TForm1.FormCreate(Sender:TObject);
+const
+  SPACING = 2;
 var
   i, delta: Integer;
 begin
@@ -55,6 +57,10 @@ begin
   Panel1.ParentColor := true;
   Panel1.ChildSizing.ControlsPerLine := 9999;
   Panel1.ChildSizing.Layout := cclLeftToRightThenTopToBottom;
+  Panel1.ChildSizing.HorizontalSpacing := SPACING;
+  Panel1.ChildSizing.VerticalSpacing := SPACING;
+  Panel1.ChildSizing.TopBottomSpacing := SPACING;
+  Panel1.ChildSizing.LeftRightSpacing := SPACING;
 
   for i := 0 to 19 do
     with TSpeedButton.Create(self) do
@@ -78,7 +84,6 @@ begin
   FPageScroller.Align := alTop;
   FPageScroller.Control := Panel1;
   FPageScroller.AutoSize := true;
-//  FPageScroller.BorderSpacing.InnerBorder := 2;
   FPageScroller.ScrollDistance := delta;
   FPageScroller.Images := ArrowImages;
   FPageScroller.ImageIndexDown := 0;
