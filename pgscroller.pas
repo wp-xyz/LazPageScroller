@@ -415,6 +415,7 @@ begin
           if p > Margin then
             p := Margin;
           FControl.Top := p;
+          FControl.Left := Margin;
         end;
     end;
     UpdateScrollButtonVisibility;
@@ -598,6 +599,14 @@ begin
   UpdateScrollButtonSize;
   UpdateScrollButtonSymbols;
   DoChangeOrientation;
+  if Assigned(FControl) then
+  begin
+    FControl.Top := Margin;
+    if (FOrientation = soHorizontal) and IsRightToLeft then
+      FControl.Left := ClientWidth - Margin - FControl.Width    // ToDo: always FControl.Left=0 here!
+    else
+      FControl.Left := Margin;
+  end;
 end;
 
 procedure TLazPageScroller.UpdateScrollButtonSize;
@@ -654,14 +663,14 @@ begin
     sbsDefault:
       SetSymbols('<', '>', '^', 'v');      // ASCII
     sbsSmallFilled:
-      SetSymbols(#$E2#$97#$82, #$E2#$96#$B8, #$E2#$96#$B4, #$E2#$96#$BE);    // "Geometric shapes" UTF8 range
+      SetSymbols(#$E2#$97#$82, #$E2#$96#$B8, #$E2#$96#$B4, #$E2#$96#$BE);  // "Geometric shapes" UTF8 range
     sbsSmallOpen:
-      SetSymbols(#$E2#$97#$83, #$E2#$96#$B9, #$E2#$96#$B5, #$E2#$96#$BF);      // "Geometric shapes" UTF8 range
+      SetSymbols(#$E2#$97#$83, #$E2#$96#$B9, #$E2#$96#$B5, #$E2#$96#$BF);  // "Geometric shapes" UTF8 range
 //    sbsMedFilled: SetSymbols(#$E2#$AF#$87, #$E2#$AF#$88, #$E2#$AF#$85, #$E2#$AF#$86);      // "Misc Symbols and Arrows" UTF8 range
     sbsLargeFilled:
-      SetSymbols(#$E2#$97#$80, #$E2#$96#$B6, #$E2#$96#$B2, #$E2#$96#$BC);    // "Geometric shapes" UTF8 range
+      SetSymbols(#$E2#$97#$80, #$E2#$96#$B6, #$E2#$96#$B2, #$E2#$96#$BC);  // "Geometric shapes" UTF8 range
     sbsLargeOpen:
-      SetSymbols(#$E2#$97#$81, #$E2#$96#$B7, #$E2#$96#$B3, #$E2#$96#$BD);      // "Geometric shapes" UTF8 range
+      SetSymbols(#$E2#$97#$81, #$E2#$96#$B7, #$E2#$96#$B3, #$E2#$96#$BD);  // "Geometric shapes" UTF8 range
     sbsImage:
       SetSymbols('', '', '', '');
   end;
