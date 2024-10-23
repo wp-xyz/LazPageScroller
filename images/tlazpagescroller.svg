@@ -1,0 +1,14 @@
+<svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <radialGradient id="a" cx="11.5" cy="11.5" r="3.5" gradientTransform="matrix(3.5714279e-8 .71428573 -.71428563 3.4693101e-8 19.714285 3.2857136)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fff6d5" offset="0"/>
+   <stop stop-color="#ffcc00" offset="1"/>
+  </radialGradient>
+ </defs>
+ <rect x=".25" y="8.25" width="23.5" height="8.5" fill="#f9f9f9" stroke="#2a7efe" stroke-width=".5" style="paint-order:normal"/>
+ <path d="m19.5 14.5 2-2-2-2" fill="none" stroke="#666666" stroke-linecap="round" stroke-linejoin="round"/>
+ <path d="m16.25 8v9" fill="none" stroke="#2a7efe" stroke-linejoin="round" stroke-width=".5"/>
+ <path d="m4.5 14.5-2-2 2-2" fill="none" stroke="#666666" stroke-linecap="round" stroke-linejoin="round"/>
+ <path d="m7.75 8v9" fill="none" stroke="#2a7efe" stroke-linejoin="round" stroke-width=".5"/>
+ <circle cx="12" cy="12.5" r="2.25" fill="url(#a)" stroke="#f5c400" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+</svg>

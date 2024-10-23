@@ -1,0 +1,1 @@
+lazres ../pagescroller_icons.res tlazpagescroller.png tlazpagescroller_150.png tlazpagescroller_200.png

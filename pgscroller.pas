@@ -28,7 +28,7 @@ type
   TPageScrollerOrientation = (soHorizontal, soVertical);
 
   TLazPageScroller = class(TCustomControl)
-  //TLazPageScroller = class(TCustomPanel)
+//  TLazPageScroller = class(TCustomPanel)
   private
     const
       DefaultBtnSize = 16;
@@ -37,6 +37,7 @@ type
     FButtonSize: Integer;
     FButtonSymbol: TScrollButtonSymbol;
     FControl: TControl;
+    FControlParent: TWinControl;
     FControlPanel: TCustomPanel;
     FMouseWheelMode: TScrollMouseWheelMode;
     FOrientation: TPageScrollerOrientation;
@@ -140,16 +141,25 @@ type
     procedure SetOrientation(AValue: TPageScrollerOrientation);
   end;
 
+procedure Register;
+
 implementation
+
+{$R pagescroller_icons.res}
 
 const
   SCROLL_DOWN_TAG = 0;
   SCROLL_UP_TAG = 1;
 
+procedure Register;
+begin
+  RegisterComponents('LazControls', [TLazPageScroller]);
+end;
+
 constructor TLazPageScroller.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  ControlStyle := ControlStyle + [csAcceptsControls, csClickEvents, csNoFocus, csParentBackground] - [csOpaque];
+  //ControlStyle := ControlStyle + [csAcceptsControls, csClickEvents, csNoFocus, csParentBackground] - [csOpaque];
 
   FButtonSize := DefaultBtnSize;
   FMouseWheelMode := mwmDefault;  // Rotate mouse wheel to scroll the embedded control
@@ -466,16 +476,23 @@ procedure TLazPageScroller.SetControl(AValue: TControl);
 begin
   if FControl <> AValue then
   begin
+    if Assigned(FControl) then
+      FControl.Parent := FControlParent;
+
     FControl := AValue;
+
     if Assigned(FControl) then
     begin
+      FControlParent := FControl.Parent;
       FControl.Parent := FControlPanel;
       if (FOrientation = soHorizontal) and IsRightToLeft then
         FControl.Left := FControlPanel.Width - FControl.Width
       else
         FControl.Left := 0;
       FControl.Top := 0;
-    end;
+    end else
+      FControlParent := nil;
+
     UpdateScrollButtonVisibility;
   end;
 end;
@@ -631,7 +648,6 @@ end;
 procedure TToolbarHelper.SetOrientation(AValue: TPageScrollerOrientation);
 var
   w, h: Integer;
-  R: TRect;
 begin
   Align := alNone;
   w := Width;
