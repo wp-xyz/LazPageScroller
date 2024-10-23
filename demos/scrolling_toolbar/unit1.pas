@@ -10,8 +10,8 @@ uses
 
 type
   TForm1 = class(TForm)
-    BitBtn1: TBitBtn;
     btnAutoSize: TButton;
+    btnColor: TButton;
     cbFlat: TCheckBox;
     cbAutoScroll: TCheckBox;
     ImageList1:TImageList;
@@ -45,6 +45,7 @@ type
     ToolButton8:TToolButton;
     ToolButton9:TToolButton;
     procedure btnAutoSizeClick(Sender: TObject);
+    procedure btnColorClick(Sender: TObject);
     procedure cbFlatChange(Sender: TObject);
     procedure cbAutoScrollChange(Sender: TObject);
     procedure FormCreate(Sender:TObject);
@@ -141,6 +142,14 @@ end;
 procedure TForm1.btnAutoSizeClick(Sender: TObject);
 begin
   FPageScroller.AutoSize := true;
+end;
+
+procedure TForm1.btnColorClick(Sender: TObject);
+begin
+  if FPageScroller.Color = clDefault then
+    FPageScroller.Color := clSilver
+  else
+    FPageScroller.Color := clDefault;
 end;
 
 end.

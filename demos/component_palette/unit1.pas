@@ -78,7 +78,7 @@ begin
   FPageScroller.Align := alTop;
   FPageScroller.Control := Panel1;
   FPageScroller.AutoSize := true;
-  FPageScroller.BorderSpacing.InnerBorder := 2;
+//  FPageScroller.BorderSpacing.InnerBorder := 2;
   FPageScroller.ScrollDistance := delta;
   FPageScroller.Images := ArrowImages;
   FPageScroller.ImageIndexDown := 0;
