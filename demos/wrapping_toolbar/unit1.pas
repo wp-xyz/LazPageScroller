@@ -12,7 +12,6 @@ type
   TForm1 = class(TForm)
     cbBackground: TCheckBox;
     cbWrapped: TCheckBox;
-    cbFlat: TCheckBox;
     cbAutoScroll: TCheckBox;
     ImageList1:TImageList;
     ToolBar1:TToolBar;
@@ -38,7 +37,6 @@ type
     ToolButton9:TToolButton;
     procedure cbAutoScrollChange(Sender: TObject);
     procedure cbBackgroundChange(Sender: TObject);
-    procedure cbFlatChange(Sender: TObject);
     procedure cbWrappedChange(Sender: TObject);
     procedure FormCreate(Sender:TObject);
   private
@@ -62,6 +60,7 @@ begin
   FPageScroller := TLazPageScroller.Create(self);
   FPageScroller.Parent := self;
   FPageScroller.Top := 0;
+  FPageScroller.Height := 2*Toolbar1.Height;
   FPageScroller.AutoSize := true;
   FPageScroller.Align := alTop;
   FPageScroller.Control := Toolbar1;
@@ -72,9 +71,12 @@ end;
 procedure TForm1.cbWrappedChange(Sender: TObject);
 begin
   if cbWrapped.Checked then
-    Toolbar1.Align := alClient
-  else
+  begin
+    Toolbar1.Align := alClient;
+  end else
+  begin
     Toolbar1.Align := alNone;
+  end;
 end;
 
 procedure TForm1.cbBackgroundChange(Sender: TObject);
@@ -88,11 +90,6 @@ end;
 procedure TForm1.cbAutoScrollChange(Sender: TObject);
 begin
   FPageScroller.AutoScroll := cbAutoScroll.Checked;
-end;
-
-procedure TForm1.cbFlatChange(Sender: TObject);
-begin
-  FPageScroller.Flat := cbFlat.Checked;
 end;
 
 end.

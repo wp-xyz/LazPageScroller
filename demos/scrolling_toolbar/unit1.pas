@@ -10,6 +10,7 @@ uses
 
 type
   TForm1 = class(TForm)
+    BitBtn1: TBitBtn;
     btnAutoSize: TButton;
     cbFlat: TCheckBox;
     cbAutoScroll: TCheckBox;
@@ -79,6 +80,9 @@ begin
   FPageScroller.Control := Toolbar1;
   FPageScroller.BorderWidth := 2;
   FPageScroller.ScrollDistance := Toolbar1.ButtonWidth;
+  FPageScroller.Images := ImageList1;
+  FPageScroller.ImageIndexDown := 21;
+  FPageScroller.ImageIndexUp := 22;
   FPageScroller.OnChangeOrientation := @ChangeOrientationHandler;
 
   seBtnSize.Value := FPageScroller.ButtonSize;
@@ -111,16 +115,7 @@ end;
 
 procedure TForm1.RadioGroup3Click(Sender: TObject);
 begin
-  if RadioGroup3.ItemIndex = Radiogroup3.Items.Count-1 then
-  begin
-    FPageScroller.Images := ImageList1;
-    FPageScroller.ImageIndexDown := 21;
-    FPageScroller.ImageIndexUp := 22;
-  end else
-  begin
-    FPageScroller.Images := nil;
-    FPageScroller.ButtonSymbol := TScrollButtonSymbol(RadioGroup3.ItemIndex);
-  end;
+  FPageScroller.ButtonSymbol := TScrollButtonSymbol(RadioGroup3.ItemIndex);
 end;
 
 procedure TForm1.seBtnSizeChange(Sender: TObject);
@@ -135,7 +130,7 @@ end;
 
 procedure TForm1.cbFlatChange(Sender: TObject);
 begin
-  FPageScroller.Flat := cbFlat.Checked;
+//  FPageScroller.Flat := cbFlat.Checked;
 end;
 
 procedure TForm1.cbAutoScrollChange(Sender: TObject);

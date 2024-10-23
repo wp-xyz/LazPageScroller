@@ -11,7 +11,6 @@ uses
 type
   TForm1 = class(TForm)
     btnFont: TButton;
-    cbFlat: TCheckBox;
     cbRTL: TCheckBox;
     cbAutoScroll: TCheckBox;
     FontDialog1: TFontDialog;
@@ -25,7 +24,6 @@ type
     seButtonSize: TSpinEdit;
     procedure btnFontClick(Sender: TObject);
     procedure cbAutoScrollChange(Sender: TObject);
-    procedure cbFlatChange(Sender: TObject);
     procedure cbRTLChange(Sender: TObject);
     procedure FormCreate(Sender:TObject);
     procedure rgMouseWheelModeClick(Sender: TObject);
@@ -79,9 +77,12 @@ begin
   FPageScroller.Top := 0;
   FPageScroller.Align := alTop;
   FPageScroller.Control := Panel1;
-  FPageScroller.AutoSize := true;
+  //FPageScroller.AutoSize := true;
   FPageScroller.BorderSpacing.Around := 2;
   FPageScroller.ScrollDistance := delta;
+  FPageScroller.Images := ArrowImages;
+  FPageScroller.ImageIndexDown := 0;
+  FPageScroller.ImageIndexUp := 1;
   FPageScroller.OnChangeOrientation := @ChangeOrientationHandler;
 
   seButtonSize.Value := FPageScroller.ButtonSize;
@@ -131,6 +132,8 @@ begin
         end;
         Panel1.Left := 0;
         Panel1.Top := 0;
+        FPageScroller.ImageIndexDown := 0;
+        FPageScroller.ImageIndexUp := 1;
       end;
     2, 3:
       begin
@@ -141,31 +144,20 @@ begin
         end;
         Panel1.Left := 0;
         Panel1.Top := 0;
+        FPageScroller.ImageIndexDown := 2;
+        FPageScroller.ImageIndexUp := 3;
       end;
   end;
 end;
 
 procedure TForm1.rgScrollBtnSymbolsClick(Sender: TObject);
 begin
-  if rgScrollBtnSymbols.ItemIndex = rgScrollBtnSymbols.Items.Count-1 then
-  begin
-    FPageScroller.Images := ArrowImages;
-    ChangeOrientationHandler(FPageScroller);
-  end else
-  begin
-    FPageScroller.Images := nil;
-    FPageScroller.ButtonSymbol := TScrollButtonSymbol(rgScrollBtnSymbols.ItemIndex);
-  end;
+  FPageScroller.ButtonSymbol := TScrollButtonSymbol(rgScrollBtnSymbols.ItemIndex);
 end;
 
 procedure TForm1.seButtonSizeChange(Sender: TObject);
 begin
   FPageScroller.ButtonSize := seButtonSize.Value;
-end;
-
-procedure TForm1.cbFlatChange(Sender: TObject);
-begin
-  FPageScroller.Flat := cbFlat.Checked;
 end;
 
 procedure TForm1.cbRTLChange(Sender: TObject);

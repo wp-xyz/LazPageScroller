@@ -23,7 +23,7 @@ uses
   Graphics, LMessages, Controls, ExtCtrls, ComCtrls, Buttons, ImgList;
 
 type
-  TScrollButtonSymbol = (sbsDefault, sbsSmallFilled, sbsSmallOpen, {sbsMedFilled, }sbsLargeFilled, sbsLargeOpen);
+  TScrollButtonSymbol = (sbsDefault, sbsSmallFilled, sbsSmallOpen, {sbsMedFilled, }sbsLargeFilled, sbsLargeOpen, sbsImage);
   TScrollMouseWheelMode = (mwmDisabled, mwmDefault, mwmReverse);
   TPageScrollerOrientation = (soHorizontal, soVertical);
 
@@ -38,26 +38,26 @@ type
     FButtonSymbol: TScrollButtonSymbol;
     FControl: TControl;
     FControlParent: TWinControl;
-    FControlPanel: TCustomPanel;
+    FImages: TCustomImageList;
+    FMargin: Integer;
     FMouseWheelMode: TScrollMouseWheelMode;
     FOrientation: TPageScrollerOrientation;
-    FScrollBtnUp: TSpeedButton;
-    FScrollBtnDown: TSpeedButton;
+    FScrollBtnDown: TBitBtn;
+    FScrollBtnUp: TBitBtn;
     FScrollDistance: Integer;
     FScrollTimer: TTimer;
     FOnChangeOrientation: TNotifyEvent;
     function ButtonSizeIsStored: Boolean;
-    function GetFlat: Boolean;
+//    function GetFlat: Boolean;
     function GetImageIndexDown: TImageIndex;
     function GetImageIndexUp: TImageIndex;
     function GetImages: TCustomImageList;
     function GetImagesWidth: Integer;
-    function GetMargin: Integer;
     function MarginIsStored: Boolean;
     procedure SetButtonSize(AValue: Integer);
     procedure SetButtonSymbol(AValue: TScrollButtonSymbol);
     procedure SetControl(AValue: TControl);
-    procedure SetFlat(AValue: Boolean);
+//    procedure SetFlat(AValue: Boolean);
     procedure SetImageIndexDown(AValue: TImageIndex);
     procedure SetImageIndexUp(AValue: TImageIndex);
     procedure SetImages(AValue: TCustomImageList);
@@ -76,6 +76,7 @@ type
     function GetScrollDistance: Integer;
     class function GetControlClassDefaultSize: TSize; override;
     procedure InternalScroll(Up: Boolean);
+    procedure Loaded; override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure Resize; override;
     procedure Scroll(ADelta: Integer); virtual;
@@ -97,12 +98,12 @@ type
     property ButtonSize: Integer read FButtonSize write SetButtonSize stored ButtonSizeIsStored;
     property ButtonSymbol: TScrollButtonSymbol read FButtonSymbol write SetButtonSymbol default sbsDefault;
     property Control: TControl read FControl write SetControl;
-    property Flat: Boolean read GetFlat write SetFlat default false;
+  //  property Flat: Boolean read GetFlat write SetFlat default false;
     property ImageIndexDown: TImageIndex read GetImageIndexDown write SetImageIndexDown default -1;
     property ImageIndexUp: TImageIndex read GetImageIndexUp write SetImageIndexUp default -1;
     property Images: TCustomImageList read GetImages write SetImages;
     property ImagesWidth: Integer read GetImagesWidth write SetImagesWidth;
-    property Margin: Integer read GetMargin write SetMargin stored MarginIsStored;
+    property Margin: Integer read FMargin write SetMargin stored MarginIsStored;
     property MouseWheelMode: TScrollMouseWheelMode read FMouseWheelMode write FMouseWheelMode default mwmDefault;
     property Orientation: TPageScrollerOrientation read FOrientation write SetOrientation default soHorizontal;
     property ScrollDistance: Integer read FScrollDistance write FScrollDistance default 0;
@@ -159,7 +160,7 @@ end;
 constructor TLazPageScroller.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  //ControlStyle := ControlStyle + [csAcceptsControls, csClickEvents, csNoFocus, csParentBackground] - [csOpaque];
+  ControlStyle := ControlStyle + [csAcceptsControls, csClickEvents, csNoFocus, csParentBackground] - [csOpaque];
 
   FButtonSize := DefaultBtnSize;
   FMouseWheelMode := mwmDefault;  // Rotate mouse wheel to scroll the embedded control
@@ -169,29 +170,25 @@ begin
   FScrollTimer.Interval := 100;
   FScrollTimer.OnTimer := @ScrollTimerHandler;
 
-  FScrollBtnDown := TSpeedButton.Create(self);
+  FScrollBtnDown := TBitBtn.Create(self);
   FScrollBtnDown.Parent := self;
   FScrollBtnDown.Width := FButtonSize;
   FScrollBtnDown.Align := alLeft;
   FScrollBtnDown.Caption := '<';
+  FScrollBtnDown.Spacing := 0;
   FScrollBtnDown.OnClick := @ScrollButtonClickHandler;
   FScrollBtnDown.OnMouseEnter := @ScrollButtonMouseEnterHandler;
   FScrollBtnDown.OnMouseLeave := @ScrollButtonMouseLeaveHandler;
 
-  FScrollBtnUp := TSpeedButton.Create(self);
+  FScrollBtnUp := TBitBtn.Create(self);
   FScrollBtnUp.Parent := self;
   FScrollBtnUp.Width := FButtonSize;
   FScrollBtnUp.Align := alRight;
   FScrollBtnUp.Caption := '>';
+  FScrollBtnUp.Spacing := 0;
   FScrollBtnUp.OnClick := @ScrollButtonClickHandler;
   FScrollBtnUp.OnMouseEnter := @ScrollButtonMouseEnterHandler;
   FScrollBtnUp.OnMouseLeave := @ScrollButtonMouseLeaveHandler;
-
-  FControlPanel := TPanel.Create(Self);
-  FControlPanel.Parent := Self;
-  FControlPanel.Align := alClient;
-  FControlPanel.BevelOuter := bvNone;
-  FControlPanel.Caption := '';
 
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);
@@ -209,8 +206,8 @@ begin
   if Assigned(FControl) then
   begin
     FControl.GetPreferredSize(PreferredWidth, PreferredHeight, false, WithThemeSpace);
-    inc(PreferredWidth, 2*FControlPanel.BorderSpacing.Around);
-    inc(PreferredHeight, 2*FControlPanel.BorderSpacing.Around);
+    inc(PreferredWidth, 2*Margin);
+    inc(PreferredHeight, 2*Margin);
   end;
 end;
 
@@ -225,7 +222,7 @@ begin
       FScrollBtnUp.Align := alLeft;
       if Assigned(FControl) then begin
         FControl.Anchors := [akTop, akRight];
-        FControl.Left := FControlPanel.ClientWidth - FControl.Width;
+        FControl.Left := ClientWidth - FControl.Width;
       end;
     end else
     begin
@@ -250,6 +247,8 @@ begin
   begin
     if ButtonSizeIsStored then
       FButtonSize := round(FButtonSize * AXProportion);
+    if MarginIsStored then
+      FMargin := round(FMargin * AXProportion);
   end;
 end;
 
@@ -285,10 +284,12 @@ begin
   Result.CY := 30;
 end;
 
+{
 function TLazPageScroller.GetFlat: Boolean;
 begin
   Result := FScrolLBtnDown.Flat;
 end;
+}
 
 function TLazPageScroller.GetImageIndexDown: TImageIndex;
 begin
@@ -310,11 +311,6 @@ begin
   Result := FScrollBtnUp.ImageWidth;
 end;
 
-function TLazPageScroller.GetMargin: Integer;
-begin
-  Result := FControlPanel.BorderSpacing.Around;
-end;
-
 { Returns the distance to be scrolled (in pixels) when a scroll button is clicked.
   This normally is the value of the ScrollDistance property, but when that is
   0 (or negative) scrolling goes by a full page (width/height of the scroller). }
@@ -322,8 +318,8 @@ function TLazPageScroller.GetScrollDistance: Integer;
 begin
   if FScrollDistance <= 0 then
     case FOrientation of
-      soHorizontal: Result := FControlPanel.Width;
-      soVertical: Result := FControlPanel.Height;
+      soHorizontal: Result := clientWidth;
+      soVertical: Result := ClientHeight;
     end
   else
     Result := FScrollDistance;
@@ -338,9 +334,16 @@ begin
   Scroll(dist);
 end;
 
+procedure TLazPageScroller.Loaded;
+begin
+  inherited;
+  if (FControl = nil) and (ControlCount > 2) then
+    SetControl(Controls[2]);
+end;
+
 function TLazPageScroller.MarginIsStored: Boolean;
 begin
-  Result := GetMargin <> 0;
+  Result := FMargin > 0;
 end;
 
 procedure TLazPageScroller.Notification(AComponent: TComponent;
@@ -376,35 +379,35 @@ begin
         if IsRightToLeft then
         begin
           // p is the position of the control's right side
-          if FControl.Width < FControlPanel.Width then
-            p := FControlPanel.Width
+          if FControl.Width < ClientWidth then
+            p := ClientWidth - Margin
           else
           begin
             p := FControl.Left + FControl.Width - ADelta;
-            if p < FControlPanel.Width then
-              p := FControlPanel.Width;
-            if p - FControl.Width > 0 then
+            if p < ClientWidth - Margin then
+              p := ClientWidth - Margin;
+            if p - FControl.Width > Margin then
               p := FControl.Width;
           end;
           FControl.Left := p - FControl.Width;
         end else
         begin
           // p is the position of the control's left side
-          p := FControl.Left + ADelta;
-          if p + FControl.Width < FControlPanel.Width then
-            p := FControlPanel.Width - FControl.Width;
-          if p > 0 then
-            p := 0;
+          p := FControl.Left + Margin + ADelta;
+          if p + FControl.Width < ClientWidth - Margin then
+            p := ClientWidth - Margin - FControl.Width;
+          if p > Margin then
+            p := Margin;
           FControl.Left := p;
         end;
       soVertical:
         begin
           // p is the position of the control's top side
-          p := FControl.Top + ADelta;
-          if p + FControl.Height < FControlPanel.Height then
-            p := FControlPanel.Height - FControl.Height;
-          if p > 0 then
-            p := 0;
+          p := FControl.Top + Margin + ADelta;
+          if p + FControl.Height < ClientHeight - Margin then
+            p := ClientHeight - Margin - FControl.Height;
+          if p > Margin then
+            p := Margin;
           FControl.Top := p;
         end;
     end;
@@ -484,12 +487,14 @@ begin
     if Assigned(FControl) then
     begin
       FControlParent := FControl.Parent;
-      FControl.Parent := FControlPanel;
+      FControl.Parent := Self;
+      FControl.Align := alNone;
       if (FOrientation = soHorizontal) and IsRightToLeft then
-        FControl.Left := FControlPanel.Width - FControl.Width
+        FControl.Left := ClientWidth - Margin - FControl.Width
       else
-        FControl.Left := 0;
-      FControl.Top := 0;
+        FControl.Left := Margin;
+      FControl.Top := Margin;
+      SetControlIndex(FControl, 0);  // Moves the control to the back so that it is overlapped by the scroll button.
     end else
       FControlParent := nil;
 
@@ -497,6 +502,7 @@ begin
   end;
 end;
 
+{
 procedure TLazPageScroller.SetFlat(AValue: Boolean);
 begin
   if AValue <> FScrollBtnDown.Flat then
@@ -505,27 +511,34 @@ begin
     FScrollBtnUp.Flat := AValue;
   end;
 end;
+}
 
 procedure TLazPageScroller.SetImageIndexDown(AValue: TImageIndex);
 begin
   if AValue <> FScrollBtnDown.ImageIndex then
+  begin
     FScrollBtnDown.ImageIndex := AValue;
+    UpdateScrollButtonSymbols;
+  end;
 end;
 
 procedure TLazPageScroller.SetImageIndexUp(AValue: TImageIndex);
 begin
   if AValue <> FScrollBtnUp.ImageIndex then
+  begin
     FScrollBtnUp.ImageIndex := AValue;
+    UpdateScrollButtonSymbols;
+  end;
 end;
 
 procedure TLazPageScroller.SetImages(AValue: TCustomImageList);
 begin
-  if AValue <> GetImages then
+  if AValue <> FImages then
   begin
-    FScrollBtnDown.Images := AValue;
-    FScrollBtnUp.Images := AValue;
-    FScrollBtnDown.ShowCaption := AValue = nil;
-    FScrollBtnUp.ShowCaption := AValue = nil;
+    FImages := AValue;
+    UpdateScrollButtonSymbols;
+//    FScrollBtnDown.ShowCaption := AValue = nil;
+//    FScrollBtnUp.ShowCaption := AValue = nil;
   end;
 end;
 
@@ -540,7 +553,14 @@ end;
 
 procedure TLazPageScroller.SetMargin(AValue: Integer);
 begin
-  FControlPanel.BorderSpacing.Around := AValue;
+  DisableAutoSizing;
+  FMargin := AValue;
+  if Assigned(FControl) then
+    case FOrientation of
+      soHorizontal: FControl.Top := FMargin;
+      soVertical: FControl.Left := FMargin;
+    end;
+  EnableAutoSizing;
 end;
 
 { Rotates the scroller from horizontal to vertical orientation, or vice versa.
@@ -592,29 +612,51 @@ end;
 procedure TLazPageScroller.UpdateScrollButtonSymbols;
 
   procedure SetSymbols(ALeft, ARight, AUp, ADown: String);
+  var
+    FixUTF8: String = '';
   begin
+    // UTF8 code points are not drawn correctly as TBitBtn caption. We
+    // fix this by appending a space character.
+    if not (FButtonSymbol in [sbsDefault, sbsImage]) then
+      FixUTF8 := ' ';
     case FOrientation of
       soHorizontal:
         begin
-          FScrollBtnDown.Caption := ALeft;
-          FScrollBtnUp.Caption := ARight;
+          FScrollBtnDown.Caption := ALeft + FixUTF8;
+          FScrollBtnUp.Caption := ARight + FixUTF8;
         end;
       soVertical:
         begin
-          FScrollBtnDown.Caption := AUp;       // Up/down mix-up is intentional
-          FScrollBtnUp.Caption := ADown;
+          FScrollBtnDown.Caption := AUp + FixUTF8;  // Up/down mix-up is intentional
+          FScrollBtnUp.Caption := ADown + FixUTF8;
         end;
+    end;
+    if FButtonSymbol = sbsImage then
+    begin
+      FScrollBtnDown.Images := FImages;
+      FScrollBtnUp.Images := FImages;
+    end else
+    begin
+      FScrollBtnDown.Images := nil;
+      FScrollBtnUp.Images := nil;
     end;
   end;
 
 begin
   case FButtonSymbol of
-    sbsDefault: SetSymbols('<', '>', '^', 'v');      // ASCII
-    sbsSmallFilled: SetSymbols(#$E2#$97#$82, #$E2#$96#$B8, #$E2#$96#$B4, #$E2#$96#$BE);    // "Geometric shapes" UTF8 range
-    sbsSmallOpen: SetSymbols(#$E2#$97#$83, #$E2#$96#$B9, #$E2#$96#$B5, #$E2#$96#$BF);      // "Geometric shapes" UTF8 range
+    sbsDefault:
+      SetSymbols('<', '>', '^', 'v');      // ASCII
+    sbsSmallFilled:
+      SetSymbols(#$E2#$97#$82, #$E2#$96#$B8, #$E2#$96#$B4, #$E2#$96#$BE);    // "Geometric shapes" UTF8 range
+    sbsSmallOpen:
+      SetSymbols(#$E2#$97#$83, #$E2#$96#$B9, #$E2#$96#$B5, #$E2#$96#$BF);      // "Geometric shapes" UTF8 range
 //    sbsMedFilled: SetSymbols(#$E2#$AF#$87, #$E2#$AF#$88, #$E2#$AF#$85, #$E2#$AF#$86);      // "Misc Symbols and Arrows" UTF8 range
-    sbsLargeFilled: SetSymbols(#$E2#$97#$80, #$E2#$96#$B6, #$E2#$96#$B2, #$E2#$96#$BC);    // "Geometric shapes" UTF8 range
-    sbsLargeOpen: SetSymbols(#$E2#$97#$81, #$E2#$96#$B7, #$E2#$96#$B3, #$E2#$96#$BD);      // "Geometric shapes" UTF8 range
+    sbsLargeFilled:
+      SetSymbols(#$E2#$97#$80, #$E2#$96#$B6, #$E2#$96#$B2, #$E2#$96#$BC);    // "Geometric shapes" UTF8 range
+    sbsLargeOpen:
+      SetSymbols(#$E2#$97#$81, #$E2#$96#$B7, #$E2#$96#$B3, #$E2#$96#$BD);      // "Geometric shapes" UTF8 range
+    sbsImage:
+      SetSymbols('', '', '', '');
   end;
 end;
 
@@ -625,17 +667,17 @@ begin
       soHorizontal:
         if IsRightToLeft then
         begin
-          FScrollBtnDown.Visible := FControl.Left + FControl.Width > FControlPanel.Width;
-          FScrollBtnUp.Visible := FControl.Left < 0;
+          FScrollBtnDown.Visible := FControl.Left + FControl.Width > ClientWidth - Margin;
+          FScrollBtnUp.Visible := FControl.Left < Margin;
         end else
         begin
-          FScrollBtnDown.Visible := FControl.Left < 0;
-          FScrollBtnUp.Visible := FControl.Left + FControl.Width > FControlPanel.Width;
+          FScrollBtnDown.Visible := FControl.Left < Margin;
+          FScrollBtnUp.Visible := FControl.Left + FControl.Width > ClientWidth - Margin;
         end;
       soVertical:
         begin
-          FScrollBtnDown.Visible := FControl.Top < 0;
-          FScrollBtnUp.Visible := FControl.Top + FControl.Height > FControlPanel.Height;
+          FScrollBtnDown.Visible := FControl.Top < Margin;
+          FScrollBtnUp.Visible := FControl.Top + FControl.Height > ClientHeight - Margin;
         end;
     end
   else
