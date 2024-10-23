@@ -73,12 +73,12 @@ begin
 
   FPageScroller := TLazPageScroller.Create(self);
   FPageScroller.Parent := self;
-//  FPageScroller.Color := clRed;
+  FPageScroller.Color := clSilver;
   FPageScroller.Top := 0;
   FPageScroller.Align := alTop;
   FPageScroller.Control := Panel1;
-  //FPageScroller.AutoSize := true;
-  FPageScroller.BorderSpacing.Around := 2;
+  FPageScroller.AutoSize := true;
+  FPageScroller.BorderSpacing.InnerBorder := 2;
   FPageScroller.ScrollDistance := delta;
   FPageScroller.Images := ArrowImages;
   FPageScroller.ImageIndexDown := 0;

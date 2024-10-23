@@ -5,8 +5,8 @@ unit Unit1;
 interface
 
 uses
-  Buttons, Classes, ComCtrls, ExtCtrls, Spin, StdCtrls, SysUtils, Forms,
-  Controls, Graphics, Dialogs, PgScroller;
+  Buttons, Classes, ComCtrls, ExtCtrls, StdCtrls, SysUtils, Forms,
+  Controls, Graphics, Dialogs, PgScroller, LazLogger;
 
 type
   TForm1 = class(TForm)
@@ -60,7 +60,7 @@ begin
   FPageScroller := TLazPageScroller.Create(self);
   FPageScroller.Parent := self;
   FPageScroller.Top := 0;
-  FPageScroller.Height := 2*Toolbar1.Height;
+  //FPageScroller.Height := 2*Toolbar1.Height;
   FPageScroller.AutoSize := true;
   FPageScroller.Align := alTop;
   FPageScroller.Control := Toolbar1;
@@ -77,6 +77,7 @@ begin
   begin
     Toolbar1.Align := alNone;
   end;
+  DebugLn(['[cbWrappedChange] Width=', Width, ', PageScroller.Width=', FPageScroller.Width, ', Toolbar.Width=', Toolbar1.Width]);
 end;
 
 procedure TForm1.cbBackgroundChange(Sender: TObject);

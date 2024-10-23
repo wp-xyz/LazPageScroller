@@ -160,7 +160,9 @@ end;
 constructor TLazPageScroller.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  ControlStyle := ControlStyle + [csAcceptsControls, csClickEvents, csNoFocus, csParentBackground] - [csOpaque];
+  ControlStyle := ControlStyle - [csOpaque]
+    + [csAcceptsControls, csClickEvents, csNoFocus, csParentBackground];
+//       csAutoSizeKeepChildLeft, csAutoSizeKeepChildTop];
 
   FButtonSize := DefaultBtnSize;
   FMouseWheelMode := mwmDefault;  // Rotate mouse wheel to scroll the embedded control
@@ -203,10 +205,13 @@ end;
 procedure TLazPageScroller.CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
   WithThemeSpace: Boolean);
 begin
+inherited;
+exit;
   if Assigned(FControl) then
   begin
     FControl.GetPreferredSize(PreferredWidth, PreferredHeight, false, WithThemeSpace);
     inc(PreferredWidth, 2*Margin);
+    PreferredWidth := 0;
     inc(PreferredHeight, 2*Margin);
   end;
 end;
@@ -473,7 +478,7 @@ end;
   than the scroller, scroll buttons are displayed which allow to scroll the
   control across the width (height) of the scroller.
 
-  IMPORTANT: The Align property of the control must be alNone or alCustom for
+  IMPORTANT: The Align property of the control must be alCustom for
   the scroller to work properly. }
 procedure TLazPageScroller.SetControl(AValue: TControl);
 begin
@@ -488,7 +493,7 @@ begin
     begin
       FControlParent := FControl.Parent;
       FControl.Parent := Self;
-      FControl.Align := alNone;
+      FControl.Align := alCustom;   // Important: No scrolling if Align=alNone
       if (FOrientation = soHorizontal) and IsRightToLeft then
         FControl.Left := ClientWidth - Margin - FControl.Width
       else
@@ -691,7 +696,7 @@ procedure TToolbarHelper.SetOrientation(AValue: TPageScrollerOrientation);
 var
   w, h: Integer;
 begin
-  Align := alNone;
+  Align := alCustom;
   w := Width;
   h := Height;
   if ((AValue = soHorizontal) and (h > w)) or
