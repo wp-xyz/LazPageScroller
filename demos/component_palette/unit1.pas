@@ -4,7 +4,7 @@ unit Unit1;
 
 interface
 
-uses
+uses                         LazLogger,
   Buttons, Classes, ComCtrls, ExtCtrls, Spin, StdCtrls, SysUtils, Forms,
   Controls, Graphics, Dialogs, PgScroller;
 

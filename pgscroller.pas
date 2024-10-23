@@ -157,6 +157,9 @@ begin
   RegisterComponents('LazControls', [TLazPageScroller]);
 end;
 
+
+{ TLazPageScroller }
+
 constructor TLazPageScroller.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -220,28 +223,25 @@ end;
 procedure TLazPageScroller.CMBiDiModeChanged(var Message: TLMessage);
 begin
   inherited;
+  if not Assigned(FControl) then
+    exit;
+
   if Orientation = soHorizontal then
   begin
     if IsRightToLeft then
     begin
-      FScrollBtnDown.Align := alRight;
-      FScrollBtnUp.Align := alLeft;
-      if Assigned(FControl) then begin
-        FControl.Anchors := [akTop, akRight];
-        FControl.Left := ClientWidth - FControl.Width;
-      end;
+      FControl.Anchors := [akTop, akRight];
+      FControl.Left := ClientWidth - FControl.Width - Margin;
     end else
     begin
-      FScrollBtnDown.Align := alLeft;
-      FScrollBtnUp.Align := alRight;
-      if Assigned(FControl) then
-      begin
-        FControl.Anchors := [akLeft, akTop];
-        FControl.Left := 0;
-      end;
+      FControl.Anchors := [akLeft, akTop];
+      FControl.Left := Margin;
     end;
   end else
+  begin
     FControl.Anchors := [akLeft, akTop];
+    FControl.Left := Margin;
+  end;
 end;
 
 { Called by LCL scaling when the monitor resolution changes. }
@@ -390,29 +390,21 @@ begin
   begin
     case FOrientation of
       soHorizontal:
-        if IsRightToLeft then
         begin
-          // p is the position of the control's right side
-          if FControl.Width < ClientWidth then
-            p := ClientWidth - Margin
+          if IsRightToLeft then
+            // In RTL, p is the position of the control's right side, measured from the right, increasing to the left
+            p := ClientWidth - (FControl.Left + FControl.Width + ADelta)
           else
-          begin
-            p := FControl.Left + FControl.Width - ADelta;
-            if p < ClientWidth - Margin then
-              p := ClientWidth - Margin;
-            if p - FControl.Width > Margin then
-              p := FControl.Width;
-          end;
-          FControl.Left := p - FControl.Width;
-        end else
-        begin
-          // p is the position of the control's left side
-          p := FControl.Left + Margin + ADelta;
+            // In LTR, p is the position of the control's left side, measured from the left, increasing to the right
+            p := FControl.Left + Margin + ADelta;
           if p + FControl.Width < ClientWidth - Margin then
             p := ClientWidth - Margin - FControl.Width;
           if p > Margin then
             p := Margin;
-          FControl.Left := p;
+          if IsRightToLeft then
+            FControl.Left := ClientWidth - (p + FControl.Width)
+          else
+            FControl.Left := p;
         end;
       soVertical:
         begin
@@ -682,8 +674,8 @@ begin
       soHorizontal:
         if IsRightToLeft then
         begin
-          FScrollBtnDown.Visible := FControl.Left + FControl.Width > ClientWidth - Margin;
-          FScrollBtnUp.Visible := FControl.Left < Margin;
+          FScrollBtnUp.Visible := FControl.Left + FControl.Width > ClientWidth - Margin;
+          FScrollBtnDown.Visible := FControl.Left < Margin;
         end else
         begin
           FScrollBtnDown.Visible := FControl.Left < Margin;
