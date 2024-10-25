@@ -61,6 +61,7 @@ begin
   Panel1.ChildSizing.VerticalSpacing := SPACING;
   Panel1.ChildSizing.TopBottomSpacing := SPACING;
   Panel1.ChildSizing.LeftRightSpacing := SPACING;
+  Panel1.BorderSpacing.Around := 10;
 
   for i := 0 to 19 do
     with TSpeedButton.Create(self) do

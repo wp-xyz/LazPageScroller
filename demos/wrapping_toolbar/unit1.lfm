@@ -2,10 +2,10 @@ object Form1: TForm1
   Left = 314
   Height = 177
   Top = 130
-  Width = 529
+  Width = 642
   Caption = 'Form1'
   ClientHeight = 177
-  ClientWidth = 529
+  ClientWidth = 642
   LCLVersion = '4.99.0.0'
   OnCreate = FormCreate
   object ToolBar1: TToolBar
@@ -18,8 +18,10 @@ object Form1: TForm1
     ButtonHeight = 24
     ButtonWidth = 23
     Caption = 'ToolBar1'
+    Color = clSilver
     EdgeBorders = []
     Images = ImageList1
+    ParentColor = False
     TabOrder = 0
     object ToolButton1: TToolButton
       Left = 1

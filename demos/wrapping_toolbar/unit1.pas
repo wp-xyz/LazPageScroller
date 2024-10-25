@@ -60,7 +60,6 @@ begin
   FPageScroller := TLazPageScroller.Create(self);
   FPageScroller.Parent := self;
   FPageScroller.Top := 0;
-  //FPageScroller.Height := 2*Toolbar1.Height;
   FPageScroller.AutoSize := true;
   FPageScroller.Align := alTop;
   FPageScroller.Control := Toolbar1;
@@ -70,14 +69,7 @@ end;
 
 procedure TForm1.cbWrappedChange(Sender: TObject);
 begin
-  if cbWrapped.Checked then
-  begin
-    Toolbar1.Align := alClient;
-  end else
-  begin
-    Toolbar1.Align := alNone;
-  end;
-  DebugLn(['[cbWrappedChange] Width=', Width, ', PageScroller.Width=', FPageScroller.Width, ', Toolbar.Width=', Toolbar1.Width]);
+  FPageScroller.Wrap(cbWrapped.Checked);
 end;
 
 procedure TForm1.cbBackgroundChange(Sender: TObject);

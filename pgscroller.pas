@@ -46,6 +46,7 @@ type
     FScrollBtnUp: TBitBtn;
     FScrollDistance: Integer;
     FScrollTimer: TTimer;
+    FWrappingPanel: TPanel;
     FOnChangeOrientation: TNotifyEvent;
     function ButtonSizeIsStored: Boolean;
 //    function GetFlat: Boolean;
@@ -84,6 +85,7 @@ type
     procedure ScrollButtonMouseEnterHandler(Sender: TObject);
     procedure ScrollButtonMouseLeaveHandler(Sender: TObject);
     procedure ScrollTimerHandler(Sender: TObject);
+    procedure UpdateControlZPosition;
     procedure UpdateScrollButtonSize;
     procedure UpdateScrollButtonSymbols;
     procedure UpdateScrollButtonVisibility;
@@ -92,6 +94,7 @@ type
 
   public
     constructor Create(AOwner: TComponent); override;
+    procedure Wrap(Enable: Boolean);
 
   published
     property AutoScroll: Boolean read FAutoScroll write FAutoScroll default false;
@@ -175,6 +178,13 @@ begin
   FScrollTimer.Interval := 100;
   FScrollTimer.OnTimer := @ScrollTimerHandler;
 
+  FWrappingPanel := TPanel.Create(self);
+  FWrappingPanel.Parent := self;
+  FWrappingPanel.Caption := '';
+  FWrappingPanel.BevelOuter := bvNone;
+  FWrappingPanel.Align := alClient;
+  FWrappingPanel.Visible := false;
+
   FScrollBtnDown := TBitBtn.Create(self);
   FScrollBtnDown.Parent := self;
   FScrollBtnDown.Width := FButtonSize;
@@ -209,15 +219,13 @@ procedure TLazPageScroller.CalculatePreferredSize(var PreferredWidth, PreferredH
   WithThemeSpace: Boolean);
 begin
   inherited;
-  {
   if Assigned(FControl) then
   begin
     FControl.GetPreferredSize(PreferredWidth, PreferredHeight, false, WithThemeSpace);
-    inc(PreferredWidth, 2*Margin);
-    PreferredWidth := 0;
-    inc(PreferredHeight, 2*Margin);
+    //inc(PreferredWidth, 2*Margin);
+    //PreferredWidth := 0;
+    //inc(PreferredHeight, 2*Margin);
   end;
-  }
 end;
 
 procedure TLazPageScroller.CMBiDiModeChanged(var Message: TLMessage);
@@ -501,7 +509,7 @@ begin
       else
         FControl.Left := Margin;
       FControl.Top := Margin;
-      SetControlIndex(FControl, 0);  // Moves the control to the back so that it is overlapped by the scroll button.
+      UpdateControlZPosition;
     end else
       FControlParent := nil;
 
@@ -609,6 +617,13 @@ begin
   end;
 end;
 
+{ Moves the scroll buttons above the control so that they are not covered by it. }
+procedure TLazPageScroller.UpdateControlZPosition;
+begin
+  SetControlIndex(FScrollBtnDown, 999);
+  SetControlIndex(FScrollBtnUp, 999);
+end;
+
 procedure TLazPageScroller.UpdateScrollButtonSize;
 begin
   case FOrientation of
@@ -700,6 +715,28 @@ begin
   begin
     FScrollBtnUp.Visible := false;
     FScrollBtnDown.Visible := false;
+  end;
+end;
+
+procedure TLazPageScroller.Wrap(Enable: Boolean);
+begin
+  if (FControl = nil) then
+    exit;
+
+  // The component does not like changing the Parent in design mode
+  if (csDesigning in ComponentState) then
+    exit;
+
+  FWrappingPanel.Visible := Enable;
+  if Enable then
+  begin
+    FControl.Parent := FWrappingPanel;
+    FControl.Align := alClient;
+  end else
+  begin
+    FControl.Parent := Self;
+    FControl.Align := alCustom;
+    UpdateControlZPosition;
   end;
 end;
 
