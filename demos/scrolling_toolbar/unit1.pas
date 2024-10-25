@@ -82,8 +82,8 @@ begin
   FPageScroller.BorderWidth := 2;
   FPageScroller.ScrollDistance := Toolbar1.ButtonWidth;
   FPageScroller.Images := ImageList1;
-  FPageScroller.ImageIndexDown := 21;
-  FPageScroller.ImageIndexUp := 22;
+  FPageScroller.ImageIndex_Left := 21;
+  FPageScroller.ImageIndex_Right := 22;
   FPageScroller.OnChangeOrientation := @ChangeOrientationHandler;
 
   seBtnSize.Value := FPageScroller.ButtonSize;

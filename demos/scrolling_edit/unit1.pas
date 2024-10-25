@@ -76,8 +76,8 @@ begin
   if rgScrollBtnSymbols.ItemIndex = rgScrollBtnSymbols.Items.Count-1 then
   begin
     FPageScroller.Images := ImageList1;
-    FPageScroller.ImageIndexDown := 21;
-    FPageScroller.ImageIndexUp := 22;
+    FPageScroller.ImageIndex_LeftOrUp := 21;
+    FPageScroller.ImageIndex_RightOrDown := 22;
   end else
   begin
     FPageScroller.Images := nil;
@@ -92,7 +92,7 @@ end;
 
 procedure TForm1.CheckBox1Change(Sender: TObject);
 begin
-  FPageScroller.Flat := Checkbox1.Checked;
+//  FPageScroller.Flat := Checkbox1.Checked;
 end;
 
 end.

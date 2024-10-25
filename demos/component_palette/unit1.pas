@@ -4,7 +4,7 @@ unit Unit1;
 
 interface
 
-uses                         LazLogger,
+uses
   Buttons, Classes, ComCtrls, ExtCtrls, Spin, StdCtrls, SysUtils, Forms,
   Controls, Graphics, Dialogs, PgScroller;
 
@@ -87,8 +87,10 @@ begin
   FPageScroller.AutoSize := true;
   FPageScroller.ScrollDistance := delta;
   FPageScroller.Images := ArrowImages;
-  FPageScroller.ImageIndexDown := 0;
-  FPageScroller.ImageIndexUp := 1;
+  FPageScroller.ImageIndex_Left := 0;
+  FPageScroller.ImageIndex_Right := 1;
+  FPageScroller.ImageIndex_Up := 2;
+  FPageScroller.ImageIndex_Down := 3;
   FPageScroller.OnChangeOrientation := @ChangeOrientationHandler;
 
   seButtonSize.Value := FPageScroller.ButtonSize;
@@ -110,17 +112,9 @@ begin
   scroller := Sender as TLazPageScroller;
   case scroller.Orientation of
     soHorizontal:
-      begin
-        Panel1.ChildSizing.Layout := cclLeftToRightThenTopToBottom;
-        FPageScroller.ImageIndexDown := 0;
-        FPageScroller.ImageIndexUp := 1;
-      end;
+      Panel1.ChildSizing.Layout := cclLeftToRightThenTopToBottom;
     soVertical:
-      begin
-        Panel1.ChildSizing.Layout := cclTopToBottomThenLeftToRight;
-        FPageScroller.ImageIndexDown := 2;
-        FPageScroller.ImageIndexUp := 3;
-      end;
+      Panel1.ChildSizing.Layout := cclTopToBottomThenLeftToRight;
   end;
 end;
 
@@ -138,8 +132,6 @@ begin
         end;
         Panel1.Left := 0;
         Panel1.Top := 0;
-        FPageScroller.ImageIndexDown := 0;
-        FPageScroller.ImageIndexUp := 1;
       end;
     2, 3:
       begin
@@ -150,8 +142,6 @@ begin
         end;
         Panel1.Left := 0;
         Panel1.Top := 0;
-        FPageScroller.ImageIndexDown := 2;
-        FPageScroller.ImageIndexUp := 3;
       end;
   end;
 end;
