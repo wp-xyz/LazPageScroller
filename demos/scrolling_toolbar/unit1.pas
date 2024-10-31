@@ -131,7 +131,7 @@ end;
 
 procedure TForm1.cbFlatChange(Sender: TObject);
 begin
-//  FPageScroller.Flat := cbFlat.Checked;
+  FPageScroller.Flat := cbFlat.Checked;
 end;
 
 procedure TForm1.cbAutoScrollChange(Sender: TObject);

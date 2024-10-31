@@ -38,6 +38,14 @@ type
       IMG_RIGHT = SCROLL_RIGHT_OR_DOWN;
       IMG_UP = IMG_LEFT + 2;
       IMG_DOWN = IMG_RIGHT + 2;
+    type
+      TScrollButton = class(TCustomControl)
+      private
+        FSpeedButton: TSpeedButton;
+      public
+        constructor Create(AOwner: TComponent); override;
+        property SpeedButton: TSpeedButton read FSpeedButton;
+      end;
   private
     FAutoScroll: Boolean;
     FButtonSize: Integer;
@@ -49,13 +57,13 @@ type
 //    FMargin: Integer;
     FMouseWheelMode: TScrollMouseWheelMode;
     FOrientation: TPageScrollerOrientation;
-    FScrollBtn: array[SCROLL_LEFT_OR_UP..SCROLL_RIGHT_OR_DOWN] of TBitBtn;
+    FScrollBtn: array[SCROLL_LEFT_OR_UP..SCROLL_RIGHT_OR_DOWN] of TScrollButton;
     FScrollDistance: Integer;
     FScrollTimer: TTimer;
     FWrappingPanel: TPanel;
     FOnChangeOrientation: TNotifyEvent;
     function ButtonSizeIsStored: Boolean;
-//    function GetFlat: Boolean;
+    function GetFlat: Boolean;
     function GetImageIndex(AIndex: Integer): TImageIndex;
     function GetImagesWidth: Integer;
     function GetMargin: Integer;
@@ -63,7 +71,7 @@ type
     procedure SetButtonSize(AValue: Integer);
     procedure SetButtonSymbol(AValue: TScrollButtonSymbol);
     procedure SetControl(AValue: TControl);
-//    procedure SetFlat(AValue: Boolean);
+    procedure SetFlat(AValue: Boolean);
     procedure SetImageIndex(AIndex: Integer; AValue: TImageIndex);
     procedure SetImages(AValue: TCustomImageList);
     procedure SetImagesWidth(AValue: Integer);
@@ -105,7 +113,7 @@ type
     property ButtonSize: Integer read FButtonSize write SetButtonSize stored ButtonSizeIsStored;
     property ButtonSymbol: TScrollButtonSymbol read FButtonSymbol write SetButtonSymbol default sbsDefault;
     property Control: TControl read FControl write SetControl;
-  //  property Flat: Boolean read GetFlat write SetFlat default false;
+    property Flat: Boolean read GetFlat write SetFlat default false;
     property ImageIndex_Left: TImageIndex index IMG_LEFT read GetImageIndex write SetImageIndex default -1;
     property ImageIndex_Right: TImageIndex index IMG_RIGHT read GetImageIndex write SetImageIndex default -1;
     property ImageIndex_Up: TImageIndex index IMG_UP read GetImageIndex write SetImageIndex default -1;
@@ -163,6 +171,17 @@ begin
 end;
 
 
+{ TLazPageScroller.TScrollButton }
+
+constructor TLazPageScroller.TScrollButton.Create(AOwner: TComponent);
+begin
+  inherited;
+  FSpeedButton := TSpeedButton.Create(Self);
+  FSpeedButton.Parent := self;
+  FSpeedButton.Align := alClient;
+end;
+
+
 { TLazPageScroller }
 
 constructor TLazPageScroller.Create(AOwner: TComponent);
@@ -188,32 +207,32 @@ begin
   FWrappingPanel.Align := alClient;
   FWrappingPanel.Visible := false;
 
-  FScrollBtn[SCROLL_LEFT_OR_UP] := TBitBtn.Create(self);
+  FScrollBtn[SCROLL_LEFT_OR_UP] := TScrollButton.Create(self);
   with FScrollBtn[SCROLL_LEFT_OR_UP] do
   begin
     Parent := self;
     Width := FButtonSize;
     Align := alLeft;
-    Caption := '<';
-    Spacing := 0;
     Tag := SCROLL_LEFT_OR_UP;
-    OnClick := @ScrollButtonClickHandler;
-    OnMouseEnter := @ScrollButtonMouseEnterHandler;
-    OnMouseLeave := @ScrollButtonMouseLeaveHandler;
+    SpeedButton.Caption := '<';
+    SpeedButton.Spacing := 0;
+    SpeedButton.OnClick := @ScrollButtonClickHandler;
+    SpeedButton.OnMouseEnter := @ScrollButtonMouseEnterHandler;
+    SpeedButton.OnMouseLeave := @ScrollButtonMouseLeaveHandler;
   end;
 
-  FScrollBtn[SCROLL_RIGHT_OR_DOWN] := TBitBtn.Create(self);
+  FScrollBtn[SCROLL_RIGHT_OR_DOWN] := TScrollButton.Create(self);
   with FScrollBtn[SCROLL_RIGHT_OR_DOWN] do
   begin
     Parent := self;
     Width := FButtonSize;
     Align := alRight;
-    Caption := '>';
-    Spacing := 0;
     Tag := SCROLL_RIGHT_OR_DOWN;
-    OnClick := @ScrollButtonClickHandler;
-    OnMouseEnter := @ScrollButtonMouseEnterHandler;
-    OnMouseLeave := @ScrollButtonMouseLeaveHandler;
+    SpeedButton.Caption := '>';
+    SpeedButton.Spacing := 0;
+    SpeedButton.OnClick := @ScrollButtonClickHandler;
+    SpeedButton.OnMouseEnter := @ScrollButtonMouseEnterHandler;
+    SpeedButton.OnMouseLeave := @ScrollButtonMouseLeaveHandler;
   end;
 
   with GetControlClassDefaultSize do
@@ -308,12 +327,10 @@ begin
   Result.CY := 30;
 end;
 
-{
 function TLazPageScroller.GetFlat: Boolean;
 begin
-  Result := FScrolLBtnDown.Flat;
+  Result := FScrollBtn[SCROLL_LEFT_OR_UP].FSpeedButton.Flat;
 end;
-}
 
 function TLazPageScroller.GetImageIndex(AIndex: Integer): TImageIndex;
 begin
@@ -324,7 +341,7 @@ end;
 function TLazPageScroller.GetImagesWidth: Integer;
 begin
   if Assigned(FScrollBtn[SCROLL_LEFT_OR_UP]) then
-    Result := FScrollBtn[SCROLL_LEFT_OR_UP].ImageWidth
+    Result := FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.ImageWidth
   else
     Result := 0;
 end;
@@ -435,8 +452,10 @@ end;
 { Handler for the OnClick event of the scroll buttons. }
 procedure TLazPageScroller.ScrollButtonClickHandler(Sender:TObject);
 begin
-  if (Sender = FScrollBtn[SCROLL_LEFT_OR_UP]) or (Sender = FScrollBtn[SCROLL_RIGHT_OR_DOWN]) then
-    InternalScroll(Sender = FScrollBtn[SCROLL_RIGHT_OR_DOWN]);
+  if (Sender = FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton) or
+     (Sender = FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton)
+  then
+    InternalScroll(Sender = FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton);
 end;
 
 procedure TLazPageScroller.ScrollButtonMouseEnterHandler(Sender: TObject);
@@ -516,16 +535,11 @@ begin
   end;
 end;
 
-{
-procedure TLazPageScroller.SetFlat(AValue: Boolean);
+procedure TLazPageScroller.SetFlat(AValue: boolean);
 begin
-  if AValue <> FScrollBtnDown.Flat then
-  begin
-    FScrollBtnDown.Flat := AValue;
-    FScrollBtnUp.Flat := AValue;
-  end;
+  FScrollBtn[SCROLL_LEFT_OR_UP].FSpeedButton.Flat := AValue;
+  FScrollBtn[SCROLL_RIGHT_OR_DOWN].FSpeedButton.Flat := AValue;
 end;
-}
 
 procedure TLazPageScroller.SetImageIndex(AIndex: Integer;
   AValue: TImageIndex);
@@ -541,9 +555,9 @@ begin
   if AIndex in [IMG_UP, IMG_DOWN] then
     btnIndex := AIndex - 2;
 
-  if Assigned(FScrollBtn[btnIndex]) and (AValue <> FScrollBtn[btnIndex].ImageIndex) then
+  if Assigned(FScrollBtn[btnIndex]) and (AValue <> FScrollBtn[btnIndex].SpeedButton.ImageIndex) then
   begin
-    FScrollBtn[btnIndex].ImageIndex := AValue;
+    FScrollBtn[btnIndex].SpeedButton.ImageIndex := AValue;
     UpdateScrollButtonSymbols;
   end;
 end;
@@ -561,8 +575,8 @@ procedure TLazPageScroller.SetImagesWidth(AValue: Integer);
 begin
   if AValue <> GetImagesWidth then
   begin
-    FScrollBtn[SCROLL_LEFT_OR_UP].ImageWidth := AValue;
-    FScrollBtn[SCROLL_RIGHT_OR_DOWN].ImageWidth := AValue;
+    FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.ImageWidth := AValue;
+    FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.ImageWidth := AValue;
   end;
 end;
 
@@ -599,15 +613,15 @@ begin
       begin
         FScrollBtn[SCROLL_LEFT_OR_UP].Align := alLeft;
         FScrollBtn[SCROLL_RIGHT_OR_DOWN].Align := alRight;
-        FScrollBtn[SCROLL_LEFT_OR_UP].ImageIndex := FImageIndex[IMG_LEFT];
-        FScrollBtn[SCROLL_RIGHT_OR_DOWN].ImageIndex := FImageIndex[IMG_RIGHT];
+        FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.ImageIndex := FImageIndex[IMG_LEFT];
+        FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.ImageIndex := FImageIndex[IMG_RIGHT];
       end;
     soVertical:
       begin
         FScrollBtn[SCROLL_LEFT_OR_UP].Align := alTop;
         FScrollBtn[SCROLL_RIGHT_OR_DOWN].Align := alBottom;
-        FScrollBtn[SCROLL_LEFT_OR_UP].ImageIndex := FImageIndex[IMG_UP];
-        FScrollBtn[SCROLL_RIGHT_OR_DOWN].ImageIndex := FImageIndex[IMG_DOWN];
+        FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.ImageIndex := FImageIndex[IMG_UP];
+        FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.ImageIndex := FImageIndex[IMG_DOWN];
       end;
   end;
   UpdateScrollButtonSize;
@@ -659,27 +673,27 @@ procedure TLazPageScroller.UpdateScrollButtonSymbols;
     case FOrientation of
       soHorizontal:
         begin
-          FScrollBtn[SCROLL_LEFT_OR_UP].Caption := ALeft + FixUTF8;
-          FScrollBtn[SCROLL_RIGHT_OR_DOWN].Caption := ARight + FixUTF8;
-          FScrollBtn[SCROLL_LEFT_OR_UP].ImageIndex := FImageIndex[IMG_LEFT];
-          FScrollBtn[SCROLL_RIGHT_OR_DOWN].ImageIndex := FImageIndex[IMG_RIGHT];
+          FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.Caption := ALeft + FixUTF8;
+          FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.Caption := ARight + FixUTF8;
+          FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.ImageIndex := FImageIndex[IMG_LEFT];
+          FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.ImageIndex := FImageIndex[IMG_RIGHT];
         end;
       soVertical:
         begin
-          FScrollBtn[SCROLL_LEFT_OR_UP].Caption := AUp + FixUTF8;
-          FScrollBtn[SCROLL_RIGHT_OR_DOWN].Caption := ADown + FixUTF8;
-          FScrollBtn[SCROLL_LEFT_OR_UP].ImageIndex := FImageIndex[IMG_UP];
-          FScrollBtn[SCROLL_RIGHT_OR_DOWN].ImageIndex := FImageIndex[IMG_DOWN];
+          FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.Caption := AUp + FixUTF8;
+          FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.Caption := ADown + FixUTF8;
+          FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.ImageIndex := FImageIndex[IMG_UP];
+          FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.ImageIndex := FImageIndex[IMG_DOWN];
         end;
     end;
     if FButtonSymbol = sbsImage then
     begin
-      FScrollBtn[SCROLL_LEFT_OR_UP].Images := FImages;
-      FScrollBtn[SCROLL_RIGHT_OR_DOWN].Images := FImages;
+      FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.Images := FImages;
+      FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.Images := FImages;
     end else
     begin
-      FScrollBtn[SCROLL_LEFT_OR_UP].Images := nil;
-      FScrollBtn[SCROLL_RIGHT_OR_DOWN].Images := nil;
+      FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.Images := nil;
+      FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.Images := nil;
     end;
   end;
 
