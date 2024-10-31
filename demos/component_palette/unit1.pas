@@ -13,6 +13,7 @@ type
     btnFont: TButton;
     cbRTL: TCheckBox;
     cbAutoScroll: TCheckBox;
+    cbFlat: TCheckBox;
     FontDialog1: TFontDialog;
     ImageList1:TImageList;
     ArrowImages: TImageList;
@@ -24,6 +25,7 @@ type
     seButtonSize: TSpinEdit;
     procedure btnFontClick(Sender: TObject);
     procedure cbAutoScrollChange(Sender: TObject);
+    procedure cbFlatChange(Sender: TObject);
     procedure cbRTLChange(Sender: TObject);
     procedure FormCreate(Sender:TObject);
     procedure rgMouseWheelModeClick(Sender: TObject);
@@ -174,6 +176,11 @@ end;
 procedure TForm1.cbAutoScrollChange(Sender: TObject);
 begin
   FPageScroller.AutoScroll := cbAutoScroll.Checked;
+end;
+
+procedure TForm1.cbFlatChange(Sender: TObject);
+begin
+  FPageScroller.Flat := cbFlat.Checked;
 end;
 
 end.

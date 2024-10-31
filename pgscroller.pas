@@ -213,9 +213,9 @@ begin
     Parent := self;
     Width := FButtonSize;
     Align := alLeft;
-    Tag := SCROLL_LEFT_OR_UP;
     SpeedButton.Caption := '<';
     SpeedButton.Spacing := 0;
+    SpeedButton.Tag := SCROLL_LEFT_OR_UP;
     SpeedButton.OnClick := @ScrollButtonClickHandler;
     SpeedButton.OnMouseEnter := @ScrollButtonMouseEnterHandler;
     SpeedButton.OnMouseLeave := @ScrollButtonMouseLeaveHandler;
@@ -227,9 +227,9 @@ begin
     Parent := self;
     Width := FButtonSize;
     Align := alRight;
-    Tag := SCROLL_RIGHT_OR_DOWN;
     SpeedButton.Caption := '>';
     SpeedButton.Spacing := 0;
+    SpeedButton.Tag := SCROLL_RIGHT_OR_DOWN;
     SpeedButton.OnClick := @ScrollButtonClickHandler;
     SpeedButton.OnMouseEnter := @ScrollButtonMouseEnterHandler;
     SpeedButton.OnMouseLeave := @ScrollButtonMouseLeaveHandler;
