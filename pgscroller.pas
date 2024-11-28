@@ -46,6 +46,7 @@ type
         FSpeedButton: TSpeedButton;
       public
         constructor Create(AOwner: TComponent); override;
+        function MouseOver: Boolean;
         property SpeedButton: TSpeedButton read FSpeedButton;
       end;
   private
@@ -189,6 +190,11 @@ begin
   FSpeedButton := TSpeedButton.Create(Self);
   FSpeedButton.Parent := self;
   FSpeedButton.Align := alClient;
+end;
+
+function TLazPageScroller.TScrollButton.MouseOver: Boolean;
+begin
+  Result := PtInRect(Rect(0, 0, Width, Height), ScreenToClient(Mouse.CursorPos));
 end;
 
 
