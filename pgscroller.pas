@@ -806,8 +806,8 @@ begin
     end
   end else
   begin
-    FScrollBtn[SCROLL_LEFT_OR_UP].Visible := false;
-    FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := false;
+    FScrollBtn[SCROLL_LEFT_OR_UP].Visible := (csDesigning in ComponentState);
+    FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := (csDesigning in ComponentState);
   end;
 end;
 
