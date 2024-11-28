@@ -6,7 +6,7 @@ interface
 
 uses
   Buttons, Classes, ComCtrls, ExtCtrls, Spin, StdCtrls, SysUtils, Forms,
-  Controls, Graphics, Dialogs, PgScroller;
+  Controls, Graphics, Dialogs, PgScroller, LazLogger;
 
 type
   TForm1 = class(TForm)
@@ -85,6 +85,8 @@ begin
   FPageScroller.ImageIndex_Left := 21;
   FPageScroller.ImageIndex_Right := 22;
   FPageScroller.OnChangeOrientation := @ChangeOrientationHandler;
+//  FPageScroller.FirstScrollInterval := 0;
+//  FPageScroller.ScrollInterval := 0;
 
   seBtnSize.Value := FPageScroller.ButtonSize;
 end;
