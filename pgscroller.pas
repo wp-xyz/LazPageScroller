@@ -456,9 +456,15 @@ begin
             // In LTR, p is the position of the control's left side, measured from the left, increasing to the right
             p := FControl.Left + Margin + ADelta;
           if p + FControl.Width < ClientWidth - Margin then
+          begin
             p := ClientWidth - Margin - FControl.Width;
+            FScrollTimer.Enabled := false;
+          end;
           if p > Margin then
+          begin
             p := Margin;
+            FScrollTimer.Enabled := false;
+          end;
           if IsRightToLeft then
             FControl.Left := ClientWidth - (p + FControl.Width)
           else
@@ -469,9 +475,15 @@ begin
           // p is the position of the control's top side
           p := FControl.Top + Margin + ADelta;
           if p + FControl.Height < ClientHeight - Margin then
+          begin
             p := ClientHeight - Margin - FControl.Height;
+            FScrollTimer.Enabled := false;
+          end;
           if p > Margin then
+          begin
             p := Margin;
+            FScrollTimer.Enabled := false;
+          end;
           FControl.Top := p;
           FControl.Left := Margin;
         end;
