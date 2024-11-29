@@ -49,3 +49,6 @@ lib/
 # Delphi history and backups
 __history/
 *.~*
+/source/*.res
+/source/lazpagescroller_pkg.pas
+/source/lazpagescroller_pkg.lpk

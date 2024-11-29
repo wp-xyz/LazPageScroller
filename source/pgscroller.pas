@@ -172,15 +172,8 @@ type
     procedure SetOrientation(AValue: TPageScrollerOrientation);
   end;
 
-procedure Register;
 
 implementation
-
-procedure Register;
-begin
-  RegisterComponents('LazControls', [TLazPageScroller]);
-end;
-
 
 { TLazPageScroller.TScrollButton }
 

@@ -46,7 +46,7 @@
         <UnitName Value="Unit1"/>
       </Unit>
       <Unit>
-        <Filename Value="..\..\pgscroller.pas"/>
+        <Filename Value="..\..\source\pgscroller.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="PgScroller"/>
       </Unit>
@@ -60,7 +60,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\.."/>
+      <OtherUnitFiles Value="..\..\source"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

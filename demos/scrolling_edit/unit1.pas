@@ -48,7 +48,7 @@ begin
   FPageScroller.Align := alTop;
   FPageScroller.Control := Edit1;
   FPageScroller.BorderWidth := 2;
-  FPageScroller.AutoSize := true;
+ // FPageScroller.AutoSize := true;
   RadioGroup1Click(nil);
 
   seBtnSize.Value := FPageScroller.ButtonSize;
@@ -76,8 +76,8 @@ begin
   if rgScrollBtnSymbols.ItemIndex = rgScrollBtnSymbols.Items.Count-1 then
   begin
     FPageScroller.Images := ImageList1;
-    FPageScroller.ImageIndex_LeftOrUp := 21;
-    FPageScroller.ImageIndex_RightOrDown := 22;
+    FPageScroller.ImageIndex_Left := 21;
+    FPageScroller.ImageIndex_Right := 22;
   end else
   begin
     FPageScroller.Images := nil;
