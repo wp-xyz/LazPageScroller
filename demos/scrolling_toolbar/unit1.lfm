@@ -1,11 +1,11 @@
 object Form1: TForm1
   Left = 314
-  Height = 340
+  Height = 595
   Top = 130
-  Width = 529
+  Width = 533
   Caption = 'Form1'
-  ClientHeight = 340
-  ClientWidth = 529
+  ClientHeight = 595
+  ClientWidth = 533
   LCLVersion = '4.99.0.0'
   OnCreate = FormCreate
   object ToolBar1: TToolBar
@@ -25,120 +25,140 @@ object Form1: TForm1
       Top = 0
       Caption = 'ToolButton1'
       ImageIndex = 0
+      OnClick = ToolButton1Click
     end
     object ToolButton2: TToolButton
       Left = 47
       Top = 0
       Caption = 'ToolButton2'
       ImageIndex = 1
+      OnClick = ToolButton1Click
     end
     object ToolButton3: TToolButton
       Left = 93
       Top = 0
       Caption = 'ToolButton3'
       ImageIndex = 2
+      OnClick = ToolButton1Click
     end
     object ToolButton4: TToolButton
       Left = 139
       Top = 0
       Caption = 'ToolButton4'
       ImageIndex = 3
+      OnClick = ToolButton1Click
     end
     object ToolButton5: TToolButton
       Left = 185
       Top = 0
       Caption = 'ToolButton5'
       ImageIndex = 4
+      OnClick = ToolButton1Click
     end
     object ToolButton6: TToolButton
       Left = 231
       Top = 0
       Caption = 'ToolButton6'
       ImageIndex = 5
+      OnClick = ToolButton1Click
     end
     object ToolButton7: TToolButton
       Left = 277
       Top = 0
       Caption = 'ToolButton7'
       ImageIndex = 6
+      OnClick = ToolButton1Click
     end
     object ToolButton8: TToolButton
       Left = 300
       Top = 0
       Caption = 'ToolButton8'
       ImageIndex = 7
+      OnClick = ToolButton1Click
     end
     object ToolButton9: TToolButton
       Left = 323
       Top = 0
       Caption = 'ToolButton9'
       ImageIndex = 8
+      OnClick = ToolButton1Click
     end
     object ToolButton10: TToolButton
       Left = 254
       Top = 0
       Caption = 'ToolButton10'
       ImageIndex = 9
+      OnClick = ToolButton1Click
     end
     object ToolButton11: TToolButton
       Left = 346
       Top = 0
       Caption = 'ToolButton11'
       ImageIndex = 1
+      OnClick = ToolButton1Click
     end
     object ToolButton12: TToolButton
       Left = 208
       Top = 0
       Caption = 'ToolButton12'
       ImageIndex = 11
+      OnClick = ToolButton1Click
     end
     object ToolButton13: TToolButton
       Left = 369
       Top = 0
       Caption = 'ToolButton13'
       ImageIndex = 12
+      OnClick = ToolButton1Click
     end
     object ToolButton14: TToolButton
       Left = 392
       Top = 0
       Caption = 'ToolButton14'
       ImageIndex = 13
+      OnClick = ToolButton1Click
     end
     object ToolButton15: TToolButton
       Left = 415
       Top = 0
       Caption = 'ToolButton15'
       ImageIndex = 14
+      OnClick = ToolButton1Click
     end
     object ToolButton16: TToolButton
       Left = 438
       Top = 0
       Caption = 'ToolButton16'
       ImageIndex = 15
+      OnClick = ToolButton1Click
     end
     object ToolButton17: TToolButton
       Left = 24
       Top = 0
       Caption = 'ToolButton17'
       ImageIndex = 16
+      OnClick = ToolButton1Click
     end
     object ToolButton18: TToolButton
       Left = 70
       Top = 0
       Caption = 'ToolButton18'
       ImageIndex = 17
+      OnClick = ToolButton1Click
     end
     object ToolButton19: TToolButton
       Left = 116
       Top = 0
       Caption = 'ToolButton19'
       ImageIndex = 18
+      OnClick = ToolButton1Click
     end
     object ToolButton20: TToolButton
       Left = 162
       Top = 0
       Caption = 'ToolButton20'
       ImageIndex = 19
+      OnClick = ToolButton1Click
     end
   end
   object cbFlat: TCheckBox
@@ -286,6 +306,16 @@ object Form1: TForm1
     Caption = 'Color'
     TabOrder = 9
     OnClick = btnColorClick
+  end
+  object Memo1: TMemo
+    Left = 32
+    Height = 266
+    Top = 312
+    Width = 416
+    Lines.Strings = (
+      'Memo1'
+    )
+    TabOrder = 10
   end
   object ImageList1: TImageList
     Left = 344

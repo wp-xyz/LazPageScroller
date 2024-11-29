@@ -297,6 +297,8 @@ begin
     FControl.Anchors := [akLeft, akTop];
     FControl.Left := Margin;
   end;
+
+  UpdateScrollButtonSymbols;
 end;
 
 { Called by LCL scaling when the monitor resolution changes. }
@@ -527,6 +529,7 @@ procedure TLazPageScroller.ScrollButtonMouseLeaveHandler(Sender: TObject);
 begin
   if FAutoScroll then
     FScrollTimer.Enabled := false;
+  UpdateScrollButtonVisibility;
 end;
 
 { When the mouse button is released all timer-based scrolls are stopped. }
@@ -710,7 +713,7 @@ begin
   begin
     FControl.Top := Margin;
     if (FOrientation = soHorizontal) and IsRightToLeft then
-      FControl.Left := ClientWidth - Margin - FControl.Width    // ToDo: always FControl.Left=0 here!
+      FControl.Left := ClientWidth - Margin - FControl.Width
     else
       FControl.Left := Margin;
   end;
@@ -752,8 +755,15 @@ procedure TLazPageScroller.UpdateScrollButtonSymbols;
     case FOrientation of
       soHorizontal:
         begin
-          FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.Caption := ALeft + FixUTF8;
-          FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.Caption := ARight + FixUTF8;
+          if IsRightToLeft then
+          begin
+            FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.Caption := ARight + FixUTF8;
+            FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.Caption := ALeft + FixUTF8;
+          end else
+          begin
+            FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.Caption := ALeft + FixUTF8;
+            FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.Caption := ARight + FixUTF8;
+          end;
           FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.ImageIndex := FImageIndex[IMG_LEFT];
           FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.ImageIndex := FImageIndex[IMG_RIGHT];
         end;
@@ -795,6 +805,8 @@ begin
 end;
 
 procedure TLazPageScroller.UpdateScrollButtonVisibility;
+var
+  scrolledToStart, scrolledToEnd: Boolean;
 begin
   if Assigned(FControl) then
   begin
@@ -802,17 +814,23 @@ begin
       soHorizontal:
         if IsRightToLeft then
         begin
-          FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := FControl.Left + FControl.Width > ClientWidth - Margin;
-          FScrollBtn[SCROLL_LEFT_OR_UP].Visible := FControl.Left < Margin;
+          scrolledToStart := (FControl.Left + FControl.Width = ClientWidth - Margin);
+          scrolledToEnd := (FControl.Left = Margin);
+          FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := (not scrolledToStart) or FScrollBtn[SCROLL_RIGHT_OR_DOWN].MouseOver;
+          FScrollBtn[SCROLL_LEFT_OR_UP].Visible := (not scrolledToEnd) or FScrollBtn[SCROLL_LEFT_OR_UP].MouseOver;
         end else
         begin
-          FScrollBtn[SCROLL_LEFT_OR_UP].Visible := FControl.Left < Margin;
-          FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := FControl.Left + FControl.Width > ClientWidth - Margin;
+          scrolledToStart := FControl.Left = Margin;
+          scrolledToEnd := FControl.Left + FControl.Width = ClientWidth - Margin;
+          FScrollBtn[SCROLL_LEFT_OR_UP].Visible := (not scrolledToStart) or FScrollBtn[SCROLL_LEFT_OR_UP].MouseOver;
+          FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := (not scrolledToEnd) or FScrollBtn[SCROLL_RIGHT_OR_DOWN].MouseOver;
         end;
       soVertical:
         begin
-          FScrollBtn[SCROLL_LEFT_OR_UP].Visible := FControl.Top < Margin;
-          FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := FControl.Top + FControl.Height > ClientHeight - Margin;
+          scrolledToStart := FControl.Top = Margin;
+          scrolledToEnd := FControl.Top + FControl.Height = ClientHeight - Margin;
+          FScrollBtn[SCROLL_LEFT_OR_UP].Visible := (not scrolledToStart) or FScrollBtn[SCROLL_LEFT_OR_UP].MouseOver;
+          FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := (not scrolledToEnd) or FScrollBtn[SCROLL_RIGHT_OR_DOWN].MouseOver;
         end;
     end
   end else

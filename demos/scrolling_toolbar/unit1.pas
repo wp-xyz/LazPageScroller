@@ -17,6 +17,7 @@ type
     ImageList1:TImageList;
     lblBtnSize: TLabel;
     lblMargin: TLabel;
+    Memo1: TMemo;
     RadioGroup1: TRadioGroup;
     RadioGroup2: TRadioGroup;
     RadioGroup3: TRadioGroup;
@@ -54,6 +55,7 @@ type
     procedure RadioGroup3Click(Sender: TObject);
     procedure seBtnSizeChange(Sender: TObject);
     procedure seMarginChange(Sender: TObject);
+    procedure ToolButton1Click(Sender: TObject);
   private
     FPageScroller: TLazPageScroller;
     procedure ChangeOrientationHandler(Sender: TObject);
@@ -129,6 +131,14 @@ end;
 procedure TForm1.seMarginChange(Sender: TObject);
 begin
   FPageScroller.Margin := seMargin.Value;
+end;
+
+procedure TForm1.ToolButton1Click(Sender: TObject);
+var
+  tb: TToolButton;
+begin
+  tb := Sender as TToolButton;
+  Memo1.Lines.Add('Clicked ' + IntToStr(tb.Index));
 end;
 
 procedure TForm1.cbFlatChange(Sender: TObject);
