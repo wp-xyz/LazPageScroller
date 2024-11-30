@@ -225,7 +225,7 @@ begin
   with FScrollBtn[SCROLL_LEFT_OR_UP] do
   begin
     Parent := self;
-    Width := FButtonSize;
+    Width := FButtonSize * 2;
     Align := alLeft;
     SpeedButton.Caption := '<';
     SpeedButton.Spacing := 0;
@@ -814,21 +814,21 @@ begin
       soHorizontal:
         if IsRightToLeft then
         begin
-          scrolledToStart := (FControl.Left + FControl.Width = ClientWidth - Margin);
-          scrolledToEnd := (FControl.Left = Margin);
+          scrolledToStart := (FControl.Left + FControl.Width <= ClientWidth - Margin);
+          scrolledToEnd := (FControl.Left >= Margin);
           FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := (not scrolledToStart) or FScrollBtn[SCROLL_RIGHT_OR_DOWN].MouseOver;
           FScrollBtn[SCROLL_LEFT_OR_UP].Visible := (not scrolledToEnd) or FScrollBtn[SCROLL_LEFT_OR_UP].MouseOver;
         end else
         begin
-          scrolledToStart := FControl.Left = Margin;
-          scrolledToEnd := FControl.Left + FControl.Width = ClientWidth - Margin;
+          scrolledToStart := FControl.Left >= Margin;
+          scrolledToEnd := FControl.Left + FControl.Width <= ClientWidth - Margin;
           FScrollBtn[SCROLL_LEFT_OR_UP].Visible := (not scrolledToStart) or FScrollBtn[SCROLL_LEFT_OR_UP].MouseOver;
           FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := (not scrolledToEnd) or FScrollBtn[SCROLL_RIGHT_OR_DOWN].MouseOver;
         end;
       soVertical:
         begin
-          scrolledToStart := FControl.Top = Margin;
-          scrolledToEnd := FControl.Top + FControl.Height = ClientHeight - Margin;
+          scrolledToStart := FControl.Top >= Margin;
+          scrolledToEnd := FControl.Top + FControl.Height <= ClientHeight - Margin;
           FScrollBtn[SCROLL_LEFT_OR_UP].Visible := (not scrolledToStart) or FScrollBtn[SCROLL_LEFT_OR_UP].MouseOver;
           FScrollBtn[SCROLL_RIGHT_OR_DOWN].Visible := (not scrolledToEnd) or FScrollBtn[SCROLL_RIGHT_OR_DOWN].MouseOver;
         end;
