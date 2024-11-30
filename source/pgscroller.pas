@@ -225,7 +225,7 @@ begin
   with FScrollBtn[SCROLL_LEFT_OR_UP] do
   begin
     Parent := self;
-    Width := FButtonSize * 2;
+    Width := FButtonSize;
     Align := alLeft;
     SpeedButton.Caption := '<';
     SpeedButton.Spacing := 0;
@@ -755,7 +755,7 @@ procedure TLazPageScroller.UpdateScrollButtonSymbols;
     case FOrientation of
       soHorizontal:
         begin
-          if IsRightToLeft then
+          if IsRightToLeft and (FButtonSymbol = sbsDefault) then   // '<', '>' are inverted by RTL
           begin
             FScrollBtn[SCROLL_LEFT_OR_UP].SpeedButton.Caption := ARight + FixUTF8;
             FScrollBtn[SCROLL_RIGHT_OR_DOWN].SpeedButton.Caption := ALeft + FixUTF8;
