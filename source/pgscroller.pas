@@ -57,7 +57,6 @@ type
     FControlParent: TWinControl;
     FImageIndex: array[IMG_LEFT..IMG_DOWN] of TImageIndex;
     FImages: TCustomImageList;
-//    FMargin: Integer;
     FMouseWheelMode: TScrollMouseWheelMode;
     FOrientation: TPageScrollerOrientation;
     FScrollBtn: array[SCROLL_LEFT_OR_UP..SCROLL_RIGHT_OR_DOWN] of TScrollButton;
@@ -73,7 +72,6 @@ type
     function GetImagesWidth: Integer;
     function GetMargin: Integer;
     function GetScrollInterval(AIndex: Integer): Integer;
-//    function MarginIsStored: Boolean;
     procedure SetButtonSize(AValue: Integer);
     procedure SetButtonSymbol(AValue: TScrollButtonSymbol);
     procedure SetControl(AValue: TControl);
@@ -93,10 +91,12 @@ type
     procedure DoChangeOrientation; virtual;
     function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
     function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function FindControl: TControl;
     procedure FirstScrollTimerHandler(Sender: TObject);
     function GetScrollDistance: Integer;
     class function GetControlClassDefaultSize: TSize; override;
     procedure InternalScroll(RightOrDown: Boolean);
+    function IsInternalControl(AControl: TControl): Boolean;
     procedure Loaded; override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure Resize; override;
@@ -114,6 +114,7 @@ type
     procedure UpdateScrollButtonVisibility;
 
     procedure CMBiDiModeChanged(var Message: TLMessage); message CM_BIDIMODECHANGED;
+    procedure CMControlChange(var Message: TCMControlChange); message CM_CONTROLCHANGE;
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -202,7 +203,7 @@ begin
 
   FButtonSize := DefaultBtnSize;
   FMouseWheelMode := mwmDefault;  // Rotate mouse wheel to scroll the embedded control
-  FillChar(FImageIndex, SizeOf(FImageIndex), -1);
+  FillChar(FImageIndex, SizeOf(FImageIndex), $FF);
 
   FScrollTimer := TTimer.Create(self);
   FScrollTimer.Enabled := false;
@@ -301,6 +302,33 @@ begin
   UpdateScrollButtonSymbols;
 end;
 
+procedure TLazPageScroller.CMControlChange(var Message: TCMControlChange);
+begin
+  inherited;
+
+  if not (csLoading in ComponentState) then
+    if Message.Inserting and (Message.Control.Parent = Self) and not IsInternalControl(Message.Control) then
+    begin
+      DisableAlign;
+      try
+        FControl := Message.Control;
+        //Message.Control.Anchors := [];
+        Message.Control.Align := alCustom;
+        if (FOrientation = soHorizontal) and IsRightToLeft then
+          Message.Control.Left := ClientWidth - Margin - Message.Control.Width
+        else
+          Message.Control.Left := Margin;
+        Message.Control.Top := Margin;
+        //Message.Control.Parent := self;
+  //      UpdateControlZPosition;
+  //      UpdateScrollButtonVisibility;
+
+      finally
+        EnableAlign;
+      end;
+    end;
+end;
+
 { Called by LCL scaling when the monitor resolution changes. }
 procedure TLazPageScroller.DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
   const AXProportion, AYProportion: Double);
@@ -337,6 +365,21 @@ begin
     InternalScroll(FMouseWheelMode = mwmReverse);
     Result := true;
   end;
+end;
+
+function TLazPageScroller.FindControl: TControl;
+var
+  i: Integer;
+begin
+  for i := ControlCount-1 downto 0 do
+  begin
+    if not IsInternalControl(Controls[i]) then
+    begin
+      Result := Controls[i];
+      exit;
+    end;
+  end;
+  Result := nil;
 end;
 
 procedure TLazPageScroller.FirstScrollTimerHandler(Sender: TObject);
@@ -406,11 +449,19 @@ begin
   Scroll(dist);
 end;
 
+function TLazPageScroller.IsInternalControl(AControl: TControl): Boolean;
+begin
+  Result :=
+    (AControl = FScrollBtn[SCROLL_LEFT_OR_UP]) or
+    (AControl = FScrollBtn[SCROLL_RIGHT_OR_DOWN]) or
+    (AControl = FWrappingPanel);
+end;
+
 procedure TLazPageScroller.Loaded;
 begin
   inherited;
-  if (FControl = nil) and (ControlCount > 2) then
-    SetControl(Controls[2]);
+  if (FControl = nil) then
+    SetControl(FindControl);
 end;
 
 procedure TLazPageScroller.Notification(AComponent: TComponent;
@@ -603,13 +654,16 @@ begin
     begin
       FControlParent := FControl.Parent;
       FControl.Parent := Self;
+                 {
       FControl.Align := alCustom;   // Important: No scrolling if Align=alNone
       if (FOrientation = soHorizontal) and IsRightToLeft then
         FControl.Left := ClientWidth - Margin - FControl.Width
       else
         FControl.Left := Margin;
       FControl.Top := Margin;
+      }
       UpdateControlZPosition;
+
     end else
       FControlParent := nil;
 
